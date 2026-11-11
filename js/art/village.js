@@ -159,7 +159,7 @@ export function sirchHouseScene() {
   s += `<path d="M380 560 L1180 520 L1260 600 L1240 820 L360 840 Z" fill="#000" opacity=".02"/>`;
   // Hecke hinten
   for (let x = 400; x < 1130; x += 34) s += bush(x, 566 - (x - 400) * 0.04, 0.9, '#58b043');
-  s += cypress(1150, 590, 1.0) + cypress(1185, 600, 0.85) + roundTree(1110, 560, 0.7);
+  s += `<g class="hot" data-hot="search">${cypress(1150, 590, 1.0)}${cypress(1185, 600, 0.85)}${roundTree(1110, 560, 0.7)}<g transform="translate(1138 498)"><circle r="16" fill="#a7a9ab" stroke="#4a3e36" stroke-width="3"/><path d="M-14 -8 L-10 -24 L-2 -14 Z M2 -14 L10 -24 L14 -8 Z" fill="#a7a9ab" stroke="#4a3e36" stroke-width="3"/><circle cx="-5" cy="-2" r="3" fill="#2a1d14"/><circle cx="5" cy="-2" r="3" fill="#2a1d14"/></g>${gameBadge(1168, 420, '🔍')}</g>`;
 
   // Garage
   s += `<g class="hot" data-hot="garage">

@@ -21,7 +21,7 @@ function badge(x, y, emoji) {
   return `<g class="room-badge" transform="translate(${x} ${y})"><g class="rb-in"><circle r="40" fill="#fffdf7" ${SW}/><text y="15" text-anchor="middle" font-size="42">${emoji}</text></g></g>`;
 }
 
-function scene(kid) {
+export function houseScene(kid) {
   let s = `<defs>
     <pattern id="wp-kid" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#ffe3ec"/><path d="M15 12 l3 6 l6 1 l-5 4 l1 6 l-5 -3 l-5 3 l1 -6 l-5 -4 l6 -1 Z" fill="#fff" opacity=".9"/><circle cx="45" cy="42" r="4" fill="#ffc2d4"/></pattern>
     <pattern id="wp-bath" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#dff4ff"/><path d="M0 0 H40 V40" fill="none" stroke="#b9e2f7" stroke-width="3"/></pattern>
@@ -33,10 +33,24 @@ function scene(kid) {
   <rect width="1600" height="900" fill="url(#hsky)"/>
   <path d="M-20 300 L140 170 L260 250 L400 130 L520 260 L1080 260 L1200 140 L1330 240 L1460 160 L1620 280 V900 H-20 Z" fill="#a9c3dc" opacity=".8"/>
   <rect x="-20" y="780" width="1640" height="140" fill="#8fd16a"/>`;
-  // Hausrahmen
+  // Hausrahmen mit Dachboden
   s += `<path d="M230 250 L800 60 L1370 250 Z" fill="#3e4249" ${SW}/>
-    <g>${[0, 1, 2, 3].map((i) => `<path d="M${560 + i * 70} ${150 - i * 4} l60 -20 l20 50 l-60 20 Z" fill="#2f4f8f" stroke="#c9d4e6" stroke-width="2.5"/>`).join('')}</g>
-    <rect x="260" y="240" width="1080" height="560" fill="#fbfaf6" ${SW}/>`;
+    <rect x="260" y="240" width="1080" height="560" fill="#fbfaf6" ${SW}/>
+    <path d="M292 242 L800 82 L1308 242 Z" fill="#f4e4c8"/>
+    <path d="M330 230 L800 98 M1270 230 L800 98" stroke="#d9c29a" stroke-width="4"/>
+    <circle cx="800" cy="140" r="24" fill="#bfe8ff" ${SW}/><path d="M800 116 V164 M776 140 H824" stroke="${OUT}" stroke-width="4"/>`;
+  s += `<g class="room hot" data-room="ankleide"><path d="M300 240 L790 86 L790 240 Z" fill="#f7e2ee"/>
+      <g ${SW}><rect x="560" y="150" width="150" height="90" rx="8" fill="#c98b55"/><path d="M635 150 V240"/><circle cx="626" cy="196" r="4" fill="#ffd23f"/><circle cx="644" cy="196" r="4" fill="#ffd23f"/>
+        <path d="M566 154 L600 154 L600 236 L566 236 Z" fill="#ffd2e4"/><path d="M574 166 h20 l-4 30 h-12 Z" fill="#ff8fc8"/><path d="M578 200 h14 v26 h-14 Z" fill="#7cc4ff"/></g>
+      <g transform="translate(470 236)" ${SW}><ellipse cx="0" cy="-40" rx="26" ry="36" fill="#d6f0ff"/><rect x="-4" y="-6" width="8" height="10" fill="#c98b55"/></g>
+      ${badge(450, 170, '👗')}</g>`;
+  s += `<g class="room hot" data-room="puzzle"><path d="M810 86 L810 240 L1040 240 L1040 159 Z" fill="#e6f4ff"/>
+      <g ${SW}><rect x="870" y="196" width="40" height="40" rx="6" fill="#ff8fa3"/><path d="M910 210 a8 8 0 1 1 0 12" fill="#ff8fa3"/><rect x="930" y="206" width="40" height="30" rx="6" fill="#7cc4ff"/><path d="M950 206 a8 8 0 1 1 0 -0.1" fill="#7cc4ff"/></g>
+      ${badge(940, 158, '🧩')}</g>`;
+  s += `<g class="room hot" data-room="sortieren"><path d="M1040 159 L1040 240 L1300 240 Z" fill="#eefbe6"/>
+      <g ${SW}><rect x="1110" y="208" width="100" height="30" rx="6" fill="#c98b55"/>${[0, 1, 2, 3].map((i) => `<rect x="${1116 + i * 24}" y="${190 - i * 0}" width="18" height="18" rx="4" fill="${['#ff6f6f', '#ffd23f', '#8fdc4a', '#7cc4ff'][i]}"/>`).join('')}</g>
+      ${badge(1100, 168, '🔢')}</g>`;
+  s += `<rect x="270" y="238" width="1060" height="10" fill="#e9e2d2"/><rect x="1036" y="156" width="8" height="84" fill="#e9e2d2"/><rect x="796" y="90" width="8" height="150" fill="#e9e2d2"/>`;
   // Zimmer
   s += `<g class="room hot" data-room="kinderzimmer"><rect x="280" y="260" width="510" height="250" fill="url(#wp-kid)"/><rect x="280" y="490" width="510" height="20" fill="url(#floorwood)"/>
       ${win(330, 290, 120, 110)}
@@ -78,14 +92,17 @@ const ROOMS = {
   kinderzimmer: { go: 'tamagotchi' },
   bad: { go: 'teeth' },
   wohnzimmer: { go: 'music' },
-  kueche: { soon: 'In der Küche backen wir bald zusammen Plätzchen und Pizza!' },
+  kueche: { go: 'baking' },
+  ankleide: { go: 'wardrobe' },
+  puzzle: { go: 'puzzle' },
+  sortieren: { go: 'sorting' },
 };
 
 register('house', (app) => {
   const kid = session.kid;
   session.paused = false;
   const el = h(`<div class="screen house">
-    <svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">${scene(kid)}</svg>
+    <svg class="world" viewBox="0 -50 1600 950" preserveAspectRatio="xMidYMid meet">${houseScene(kid)}</svg>
     <div class="game-top"><button class="btn round ghost g-back" aria-label="Zurück">${ICON.back}</button></div>
   </div>`);
   app.appendChild(el);

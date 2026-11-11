@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{background:#cfe;margin:0}.r{display:flex;flex-wrap:wrap}.r svg{width:150px;height:220px}</style></head><body><div class="r" id="r"></div>
+<script type="module">import {personSVG,FAMILY,defaultKidAvatar} from '../js/art/person.js';
+const k=defaultKidAvatar(0);
+const outfits=[{top:'dirndl',topColor:'#e94e6e',hat:'trachtenhut'},{top:'tracht',bottom:'lederhose',hat:'trachtenhut'},{top:'regenjacke',topColor:'#ffd23f',boots:'gummistiefel',extra:'regenschirm'},{top:'winterjacke',topColor:'#4fa3ff',hat:'muetze',hatColor:'#ff6f6f',extra:'schal',boots:'winterstiefel'},{top:'tshirt',bottom:'shorts',hat:'sonnenhut',extra:'sonnenbrille'},{top:'schlafanzug',topColor:'#9b8cff'},{top:'ringel',topColor:'#e33',hat:'piratenhut',extra:'zauberstab'},{top:'hoodie',topColor:'#e33b3b',hat:'feuerwehrhelm',boots:'gummistiefel',bootColor:'#333'}];
+for(const o of outfits) document.getElementById('r').innerHTML+=personSVG({...k,accessory:'keins',...o});
+document.getElementById('r').innerHTML+=personSVG({...FAMILY.papa,top:'tracht',bottom:'lederhose',hat:'trachtenhut'});
+document.getElementById('r').innerHTML+=personSVG({...FAMILY.mama,top:'dirndl',topColor:'#3f8a6a',accessory:'keins'});
+</script></body></html>

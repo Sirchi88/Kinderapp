@@ -153,6 +153,7 @@ register('village', (app, params) => {
     house() { sfx.door(); go('house', {}); },
     terrace() { sfx.pop(); go('memory', {}); },
     easel() { sfx.pop(); go('paint', {}); },
+    search() { sfx.meow(); go('search', {}); },
   };
 
   world.addEventListener('click', (e) => {
@@ -162,7 +163,7 @@ register('village', (app, params) => {
     const p = toWorld(e);
     const act = ACTIONS[g.dataset.hot];
     if (!act) return;
-    if (!['plush', 'kid', 'bailey', 'house', 'terrace', 'easel'].includes(g.dataset.hot)) wiggle(g);
+    if (!['plush', 'kid', 'bailey', 'house', 'terrace', 'easel', 'search'].includes(g.dataset.hot)) wiggle(g);
     act(g, p);
   });
 

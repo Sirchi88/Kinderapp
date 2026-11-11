@@ -26,6 +26,14 @@ Das ganze Konzept steht in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 - Alle Spiele: leicht/schwer selbst wählen, Schwierigkeit steigt mit jedem Erfolg, Sterne als Belohnung
 - Elternbereich: Fotos für Memory hochladen, gemalte Bilder verwalten
 
+## Etappe 3 – Mehr Spiele
+- **Dachboden** im Haus: Ankleide und Spielzimmer
+- **Backen & Kochen** in der Küche: Plätzchen (Zutaten, Rühren, Ausrollen, Ausstechen, Ofen, Verzieren), Pizza (Soße, Käse, Beläge, Ofen), Kuchen (Teig, Ofen, Sahne, Früchte, Kerzen auspusten). Zum Schluss probiert das Kuscheltier.
+- **Puzzle**: Dorf, Haus, Familie, Kuscheltiere oder eigene Fotos – von 4 bis 20 Teilen
+- **Suchbilder „Wo ist Bailey?“** (Zypressen im Garten): Bailey und versteckte Dinge im Dorf oder im Haus finden, mit Tipp-Lupe
+- **Sortieren & Zählen** (Spielzimmer): Zählen mit Mitzählen, Farben in Körbe sortieren, Größen vergleichen, Formen einstecken
+- **Kleiderschrank** (Ankleide): Alle Familienmitglieder anziehen, Kostüme (Dirndl, Tracht mit Lederhose, Prinzessin, Fee, Pirat, Feuerwehr, Schlafanzug), Foto-Knopf, und das **Wetter-Spiel** (Sonne, Regen, Schnee – richtig anziehen!)
+
 ## Lokal starten
 ```bash
 python3 -m http.server 8000

@@ -15,6 +15,11 @@ import './games/memory.js';
 import './games/paint.js';
 import './games/teeth.js';
 import './games/music.js';
+import './games/baking.js';
+import './games/puzzle.js';
+import './games/search.js';
+import './games/sorting.js';
+import './games/wardrobe.js';
 
 // Sprechblase zeigt, was gerade gesagt wird – mit dem Kuscheltier des Kindes
 onSay((text) => showBubble(text, session.kid?.plush || 'baer'));

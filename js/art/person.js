@@ -126,9 +126,14 @@ function patternDefs(o, ids) {
 
 function torso(o, ids) {
   const tc = o.topColor || '#7cc4ff';
-  const fill = o.top === 'ringel' ? `url(#${ids.stripe})` : o.top === 'steppjacke' ? `url(#${ids.quilt})` : tc;
+  const fill = o.top === 'ringel' ? `url(#${ids.stripe})` : o.top === 'steppjacke' ? `url(#${ids.quilt})` : o.top === 'dirndl' ? shade(tc, -45) : o.top === 'tracht' ? '#fffdf7' : tc;
   const body = `M66 156 Q100 146 134 156 Q144 196 142 230 Q100 240 58 230 Q56 196 66 156 Z`;
   let s = '';
+  if (o.top === 'dirndl') {
+    s += `<path d="M62 192 L40 258 Q100 274 160 258 L138 192 Z" fill="${tc}" ${SW}/><path d="M48 248 Q100 262 152 248" stroke="${shade(tc, 50)}" stroke-width="4" fill="none" stroke-dasharray="1 7" stroke-linecap="round"/>
+      <path d="M78 196 L70 250 Q100 258 130 250 L122 196 Z" fill="#fff8e7" ${SW}/><path d="M72 246 q7 6 14 0 q7 6 14 0 q7 6 14 0 q7 6 14 0" stroke="#e8d9bd" stroke-width="2.5" fill="none"/>`;
+  }
+  if (o.top === 'regenjacke') s += `<path d="M64 196 L56 250 Q100 260 144 250 L136 196 Z" fill="${tc}" ${SW}/>`;
   if (o.top === 'kleid') {
     s += `<path d="M62 196 L44 254 Q100 270 156 254 L138 196 Z" fill="${tc}" ${SW}/>
       <path d="M50 246 Q100 262 150 246" stroke="#fff" stroke-width="4" fill="none" opacity=".8" stroke-dasharray="2 8"/>`;
@@ -156,6 +161,25 @@ function torso(o, ids) {
       s += `<path d="M86 150 Q100 164 114 150" fill="${o.skin}" ${SW}/><path d="M76 190 H124 V232 H76 Z" fill="${o.bottomColor}" ${SW}/>
         <path d="M78 190 L72 156 M122 190 L128 156" stroke="${o.bottomColor}" stroke-width="7"/><circle cx="82" cy="196" r="3" fill="#ffd23f"/><circle cx="118" cy="196" r="3" fill="#ffd23f"/><rect x="90" y="200" width="20" height="14" rx="3" fill="${shade(o.bottomColor, -15)}"/>`;
       break;
+    case 'dirndl':
+      s += `<path d="M78 150 Q100 172 122 150" fill="#fff" ${SW}/><path d="M86 152 Q100 166 114 152" fill="${o.skin}"/>
+        <path d="M90 178 L110 186 M110 178 L90 186 M90 190 L110 198 M110 190 L90 198" stroke="#ffd23f" stroke-width="2.5"/><circle cx="90" cy="176" r="2.5" fill="#d9d9d9"/><circle cx="110" cy="176" r="2.5" fill="#d9d9d9"/>
+        <path d="M70 196 Q100 204 130 196" stroke="${shade(tc, 30)}" stroke-width="4" fill="none"/><path d="M118 200 q10 4 8 18 M118 200 q-2 12 4 20" stroke="${shade(tc, 40)}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      break;
+    case 'regenjacke':
+      s += `<path d="M84 152 Q100 166 116 152" fill="none" ${SW}/><path d="M100 160 V232" stroke="${shade(tc, -30)}" stroke-width="3"/>${[176, 196, 216].map((y) => `<circle cx="106" cy="${y}" r="3.5" fill="#fff" ${SW}/>`).join('')}<path d="M70 206 h16 M114 206 h16" stroke="${shade(tc, -30)}" stroke-width="3"/>`;
+      break;
+    case 'winterjacke':
+      s += `<path d="M64 182 Q100 190 136 182 M62 206 Q100 214 138 206" stroke="${shade(tc, -25)}" stroke-width="3" fill="none"/><path d="M100 156 V232" stroke="${shade(tc, -30)}" stroke-width="3"/>
+        <path d="M74 150 q8 -6 14 2 q6 -8 12 0 q6 -8 12 0 q6 -8 14 -2 q4 12 -8 14 q-24 8 -46 0 q-10 -2 2 -14 Z" fill="#fff" ${SW}/>`;
+      break;
+    case 'schlafanzug':
+      s += `<path d="M84 150 Q100 166 116 150" fill="${o.skin}" ${SW}/><path d="M84 150 L92 166 M116 150 L108 166" stroke="#fff" stroke-width="4"/>${[[78, 186], [118, 180], [96, 210], [126, 216], [72, 216]].map(([x, y]) => `<path transform="translate(${x} ${y}) scale(.5)" d="M0 -10 L3 -3 L10 -3 L4 2 L6 10 L0 5 L-6 10 L-4 2 L-10 -3 L-3 -3 Z" fill="#fff6a8"/>`).join('')}`;
+      break;
+    case 'tracht':
+      s += `<path d="M86 150 Q100 164 114 150" fill="${o.skin}" ${SW}/><path d="M80 152 L84 230 M120 152 L116 230" stroke="#7a4a2c" stroke-width="8"/><rect x="80" y="182" width="40" height="10" rx="3" fill="#7a4a2c" ${SW}/>
+        <g transform="translate(100 187)">${[0, 60, 120, 180, 240, 300].map((r) => `<ellipse rx="2.5" ry="5" cy="-4" transform="rotate(${r})" fill="#fff"/>`).join('')}<circle r="2" fill="#ffd23f"/></g>`;
+      break;
     case 'warnweste':
       s += `<path d="M86 150 Q100 164 114 150" fill="${o.skin}" ${SW}/><path d="M64 160 Q76 152 88 154 L94 232 L60 230 Q58 196 64 160 Z M136 160 Q124 152 112 154 L106 232 L140 230 Q142 196 136 160 Z" fill="#ff8a2b" ${SW}/>
         <path d="M60 196 H94 M106 196 H140 M60 212 H94 M106 212 H140" stroke="#f4f6a8" stroke-width="5"/>`;
@@ -165,8 +189,8 @@ function torso(o, ids) {
 }
 
 function arms(o, pose) {
-  const long = ['hoodie', 'steppjacke', 'pulli'].includes(o.top);
-  const tc = o.top === 'warnweste' ? '#7f8a96' : o.top === 'latzhose' ? (o.topColor || '#fff') : o.topColor || '#7cc4ff';
+  const long = ['hoodie', 'steppjacke', 'pulli', 'regenjacke', 'winterjacke', 'schlafanzug', 'tracht'].includes(o.top);
+  const tc = o.top === 'warnweste' ? '#7f8a96' : o.top === 'latzhose' ? (o.topColor || '#fff') : ['dirndl', 'tracht'].includes(o.top) ? '#ffffff' : o.topColor || '#7cc4ff';
   const sleeveFill = o.top === 'ringel' ? tc : tc;
   const arm = (side) => {
     const x = side === 'l' ? 58 : 122;
@@ -193,15 +217,24 @@ function legs(o) {
         return `<rect x="${x}" y="222" width="22" height="48" rx="10" fill="${sk}" ${SW}/>`;
       case 'leggings':
         return `<rect x="${x}" y="222" width="22" height="48" rx="10" fill="${bc}" ${SW}/>`;
+      case 'lederhose':
+        return `<rect x="${x}" y="222" width="22" height="48" rx="10" fill="${sk}" ${SW}/><rect x="${x}" y="246" width="22" height="24" rx="6" fill="#ece6da" ${SW}/><path d="M${x + 4} 252 h14 M${x + 4} 258 h14" stroke="#9b8f7d" stroke-width="2"/><rect x="${x - 1}" y="222" width="24" height="20" rx="6" fill="#8a5a32" ${SW}/>`;
       default:
         return `<rect x="${x}" y="222" width="22" height="48" rx="9" fill="${bc}" ${SW}/>`;
     }
   };
-  if (o.top === 'kleid') s += `<rect x="76" y="230" width="22" height="40" rx="10" fill="${o.bottom === 'leggings' ? bc : sk}" ${SW}/><rect x="102" y="230" width="22" height="40" rx="10" fill="${o.bottom === 'leggings' ? bc : sk}" ${SW}/>`;
+  if (o.top === 'schlafanzug') s += `<rect x="76" y="222" width="22" height="48" rx="10" fill="${o.topColor}" ${SW}/><rect x="102" y="222" width="22" height="48" rx="10" fill="${o.topColor}" ${SW}/>`;
+  else if (o.top === 'kleid' || o.top === 'dirndl') s += `<rect x="76" y="230" width="22" height="40" rx="10" fill="${o.bottom === 'leggings' ? bc : sk}" ${SW}/><rect x="102" y="230" width="22" height="40" rx="10" fill="${o.bottom === 'leggings' ? bc : sk}" ${SW}/>`;
   else s += leg(76) + leg(102);
+  if (o.bottom === 'lederhose' && !['kleid', 'dirndl', 'schlafanzug'].includes(o.top)) s += `<path d="M88 226 h24 v12 h-24 Z" fill="#6b4226" stroke="#4a2e1c" stroke-width="2"/><path d="M92 230 q8 6 16 0" stroke="#e8c690" stroke-width="2" fill="none"/>`;
   if (o.bottom === 'jeans' && o.top !== 'kleid') s += `<path d="M87 236 v26 M113 236 v26" stroke="${shade(bc, 30)}" stroke-width="2" stroke-dasharray="3 4"/>`;
   if (o.bottom === 'rock' && o.top !== 'kleid') s += `<path d="M62 214 L50 252 Q100 264 150 252 L138 214 Z" fill="${bc}" ${SW}/><path d="M76 222 l-6 30 M100 224 v32 M124 222 l6 30" stroke="${shade(bc, -20)}" stroke-width="2.5"/>`;
   const sh = o.shoes || '#ff6f91';
+  if (o.boots) {
+    const bc2 = o.boots === 'winterstiefel' ? '#8a5a32' : o.bootColor || '#ff5a5a';
+    for (const x of [75, 103]) s += `<path d="M${x} 244 h24 v26 q0 10 10 10 v2 h-36 Z" fill="${bc2}" ${SW}/>` + (o.boots === 'winterstiefel' ? `<rect x="${x - 3}" y="240" width="30" height="10" rx="5" fill="#fff" ${SW}/>` : `<path d="M${x + 3} 252 v16" stroke="#fff" stroke-width="4" opacity=".5" stroke-linecap="round"/>`);
+    return s;
+  }
   s += `<ellipse cx="86" cy="274" rx="17" ry="10" fill="${sh}" ${SW}/><ellipse cx="114" cy="274" rx="17" ry="10" fill="${sh}" ${SW}/>
     <path d="M76 270 q8 -5 16 0 M106 270 q8 -5 16 0" stroke="${shade(sh, 50)}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
   return s;
@@ -276,7 +309,39 @@ function accessory(o, ids, layer) {
     case 'haarreif': s += `<path d="M44 84 Q100 20 156 84" stroke="${ac}" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="66" cy="54" r="5" fill="#fff"/><circle cx="100" cy="42" r="5" fill="#fff"/><circle cx="134" cy="54" r="5" fill="#fff"/>`; break;
     case 'muetze': s += `<path d="M36 92 C36 26 164 26 164 92 Z" fill="${ac}" ${SW}/><rect x="32" y="82" width="136" height="18" rx="9" fill="${shade(ac, -22)}" ${SW}/><circle cx="100" cy="28" r="14" fill="#fff" ${SW}/>`; break;
     case 'kappe': s += `<path d="M40 88 C40 30 160 30 160 88 Z" fill="${ac}" ${SW}/><path d="M100 86 Q150 78 186 92 Q160 100 100 94 Z" fill="${shade(ac, -22)}" ${SW}/><circle cx="100" cy="36" r="5" fill="${shade(ac, -30)}"/>`; break;
+    case 'sonnenhut': s += `<ellipse cx="100" cy="66" rx="92" ry="20" fill="#f3d27a" ${SW}/><path d="M50 66 C50 14 150 14 150 66 Z" fill="#f6dc8e" ${SW}/><path d="M52 56 Q100 66 148 56 L148 64 Q100 74 52 64 Z" fill="${ac}"/><path d="M60 72 Q100 82 140 72" stroke="#d9b55a" stroke-width="3" fill="none"/>`; break;
+    case 'piratenhut': s += `<path d="M24 80 Q100 -10 176 80 Q140 66 100 72 Q60 66 24 80 Z" fill="#2f3238" ${SW}/><circle cx="100" cy="44" r="12" fill="#fff"/><circle cx="96" cy="42" r="2.5" fill="#2f3238"/><circle cx="104" cy="42" r="2.5" fill="#2f3238"/><path d="M90 58 l20 8 M110 58 l-20 8" stroke="#fff" stroke-width="4"/><path d="M30 78 Q100 62 170 78" stroke="#ffd23f" stroke-width="4" fill="none"/>`; break;
+    case 'feuerwehrhelm': s += `<path d="M34 92 C34 20 166 20 166 92 Z" fill="#e33b3b" ${SW}/><path d="M26 92 Q100 104 174 92 L170 82 Q100 94 30 82 Z" fill="#c22b2b" ${SW}/><path d="M100 22 V84" stroke="#c22b2b" stroke-width="10"/><path d="M86 48 L100 36 L114 48 L108 64 H92 Z" fill="#ffd23f" ${SW}/>`; break;
+    case 'trachtenhut': s += `<ellipse cx="100" cy="64" rx="70" ry="13" fill="#3f6b45" ${SW}/><path d="M60 64 C58 22 142 22 140 64 Z" fill="#4f8a58" ${SW}/><path d="M60 54 Q100 62 140 54" stroke="#e8c690" stroke-width="5" fill="none"/><path d="M134 50 Q156 6 172 -6 Q160 20 140 52 Z" fill="#fff" stroke="#bbb" stroke-width="2"/><path d="M138 50 Q154 16 168 4" stroke="#9aa" stroke-width="2"/>`; break;
+    case 'sonnenbrille': s += `<g ${SW}><path d="M58 102 h36 q4 0 4 4 q-2 20 -20 20 q-20 0 -20 -20 Z M142 102 h-36 q-4 0 -4 4 q2 20 20 20 q20 0 20 -20 Z" fill="#2a2b38"/><path d="M94 106 h12" fill="none"/></g><path d="M66 108 l10 0 M112 108 l10 0" stroke="#fff" stroke-width="3" opacity=".7"/>`; break;
     case 'helm': s += `<path d="M38 90 C38 22 162 22 162 90 Z" fill="${ac}" ${SW}/><rect x="30" y="84" width="140" height="14" rx="7" fill="${shade(ac, -25)}" ${SW}/><path d="M100 30 V86" stroke="${shade(ac, -25)}" stroke-width="8"/>`; break;
+  }
+  return s;
+}
+
+/** Zusätzliche Kleidung für den Kleiderschrank: o.hat, o.extra, Kapuze */
+function wear(o, ids, layer) {
+  let s = '';
+  if (layer === 'back') {
+    if (o.top === 'regenjacke' && !o.hat) s += `<path d="M30 110 C26 20 174 20 170 110 L160 150 L40 150 Z" fill="${o.topColor}" ${SW}/>`;
+    if (o.extra === 'fluegel') s += accessory({ ...o, accessory: 'fluegel', accColor: o.extraColor }, ids, 'back');
+    return s;
+  }
+  if (layer === 'body') {
+    if (o.extra === 'schal') s += `<path d="M66 148 Q100 166 134 148 L136 164 Q100 182 64 164 Z" fill="${o.extraColor || '#e94e4e'}" ${SW}/><path d="M112 168 l6 40 l14 -4 l-6 -38" fill="${o.extraColor || '#e94e4e'}" ${SW}/><path d="M74 156 v10 M90 162 v12 M106 162 v12 M122 156 v10" stroke="#fff" stroke-width="4"/>`;
+    if (o.extra === 'zauberstab') s += `<path d="M58 214 L36 168" stroke="#c98b55" stroke-width="5" stroke-linecap="round"/><path transform="translate(34 162)" d="M0 -14 L4 -4 L14 -4 L6 2 L9 12 L0 6 L-9 12 L-6 2 L-14 -4 L-4 -4 Z" fill="#ffd23f" ${SW}/>`;
+    if (o.extra === 'tasche') s += accessory({ ...o, accessory: 'tasche' }, ids, 'body');
+    return s;
+  }
+  if (layer === 'head') {
+    if (o.hat) s += accessory({ ...o, accessory: o.hat, accColor: o.hatColor || '#ff6f91', glasses: null }, ids, 'head');
+    if (['sonnenbrille', 'brille'].includes(o.extra)) s += accessory({ ...o, accessory: o.extra, accColor: o.extraColor || '#4fa3ff', glasses: null }, ids, 'head');
+    return s;
+  }
+  if (layer === 'top' && o.extra === 'regenschirm') {
+    const c = o.extraColor || '#4fa3ff';
+    s += `<path d="M176 30 V214 q0 10 -10 10" stroke="#5a3e2b" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M86 34 Q176 -50 266 34 Q244 22 221 34 Q198 22 176 34 Q154 22 131 34 Q108 22 86 34 Z" fill="${c}" ${SW}/><path d="M176 -12 V34 M131 34 Q150 0 176 -12 M221 34 Q202 0 176 -12" stroke="${shade(c, -25)}" stroke-width="3" fill="none"/>`;
   }
   return s;
 }
@@ -300,10 +365,11 @@ export function personSVG(o, opt = {}) {
     <ellipse cx="100" cy="282" rx="${46 * build}" ry="8" fill="#000" opacity=".12"/>
     <g class="body-bob">
     ${accessory(o, ids, 'back')}
-    ${hairBack(o.hair, o.hairColor)}
+    ${o.hat ? '' : hairBack(o.hair, o.hairColor)}${o.hat && ['lang', 'zoepfe', 'bob'].includes(o.hair) ? hairBack(o.hair, o.hairColor) : ''}${wear(o, ids, 'back')}
     <g transform="${bodyT}">${legs(o)}${torso(o, ids)}${arms(o, pose)}</g>
-    ${accessory(o, ids, 'body')}
-    <g class="head">${face(o, mood)}${features(o, mood)}${hairFront(o.hair, o.hairColor)}${accessory(o, ids, 'head')}</g>
+    ${accessory(o, ids, 'body')}${wear(o, ids, 'body')}
+    <g class="head">${face(o, mood)}${features(o, mood)}${hairFront(o.hat && ['wuschel', 'locken', 'dutt', 'pferdeschwanz'].includes(o.hair) ? 'kurz' : o.hair, o.hairColor)}${accessory(o, ids, 'head')}${wear(o, ids, 'head')}</g>
+    ${wear(o, ids, 'top')}
     </g>
   </g></svg>`;
 }
