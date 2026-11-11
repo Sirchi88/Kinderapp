@@ -9,6 +9,7 @@ import { askPin } from '../pin.js';
 import { openParents } from './parents.js';
 import { checkLimitNow } from '../breaks.js';
 import { sirchHouseScene } from '../art/village.js';
+import { kidPlush } from '../pet.js';
 
 function bunting() {
   const cols = ['#ff8fa3', '#ffd23f', '#6fd3c7', '#b68cff', '#8fdc6a', '#ff9f1c'];
@@ -27,7 +28,7 @@ register('profiles', (app) => {
     <h1>Wer spielt heute?</h1>
     <div class="profile-row">
       ${state.kids.map((k) => `<button class="profile-card" data-id="${k.id}" style="--kid:${k.color};--kid-d:${kidColorDark(k.color)}">
-        ${k.avatar ? `<div class="avatar">${personSVG({ ...k.avatar, scale: 1 }, { pose: 'wave' })}</div>${k.plush ? `<div class="pl">${plushSVG(k.plush)}</div>` : ''}` : `<div class="question">?</div>`}
+        ${k.avatar ? `<div class="avatar">${personSVG({ ...k.avatar, scale: 1 }, { pose: 'wave' })}</div>${k.plush ? `<div class="pl">${kidPlush(k)}</div>` : ''}` : `<div class="question">?</div>`}
         <div class="stars">${ICON.star}${k.stars}</div>
         <div class="name">${esc(k.name)}</div></button>`).join('')}
     </div>

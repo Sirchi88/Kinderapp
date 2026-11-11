@@ -17,6 +17,10 @@ function defaultKid(id, name, color) {
     breaks: { enabled: true, intervalMin: 15 },
     dailyLimitMin: 0,      // 0 = kein Limit
     extraMinToday: { day: '', min: 0 },
+    progress: {},          // Spielfortschritt je Spiel & Stufe
+    pet: null,             // Bedürfnisse des Kuscheltiers (Tamagotchi)
+    plushOutfit: {},       // Kleidung des Kuscheltiers
+    lastPetStar: '',
   };
 }
 
@@ -35,6 +39,7 @@ const DEFAULTS = {
     voice: true,
     voiceRate: 0.95,
     motionCheck: true,
+    petSad: true,               // Kuscheltier darf traurig werden
   },
   rewards: [
     { id: 'r1', emoji: '🍦', name: 'Eis essen mit Papa', cost: 20 },

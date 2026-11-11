@@ -7,6 +7,7 @@ import { say, hush } from './speech.js';
 import { sfx, playMusic, stopMusic, unlockAudio } from './audio.js';
 import { requestMotion, sensorWorks, isStill, isMoving } from './motion.js';
 import { buildBreakPlan } from './activities.js';
+import { kidPlush } from './pet.js';
 import { askPin } from './pin.js';
 import { go } from './nav.js';
 
@@ -84,7 +85,7 @@ export async function startBreak(opts = {}) {
   // 1) Ankündigung
   sfx.tada();
   body.innerHTML = `<div class="title">Bewegungspause!</div>
-    <div class="hero"><div class="pl jump">${plushSVG(plush)}</div></div>
+    <div class="hero"><div class="pl jump">${kidPlush(kid, { mood: 'happy' })}</div></div>
     <div class="sub">Leg mich ganz vorsichtig hin.</div>
     <div class="row"><button class="btn go big" aria-label="Okay">${ICON.check}</button></div>`;
   say(`${kid.name}, Zeit für eine Bewegungspause! Leg mich ganz vorsichtig hin.`);
@@ -98,7 +99,7 @@ export async function startBreak(opts = {}) {
   // 2) Gerät ablegen
   root.classList.add('still');
   body.innerHTML = `<div class="title">Leg mich hin!</div>
-    <div class="hero"><div class="device"><div class="tbl"></div><div class="tab"></div></div><div class="pl">${plushSVG(plush, { mood: 'happy' })}</div></div>
+    <div class="hero"><div class="device"><div class="tbl"></div><div class="tab"></div></div><div class="pl">${kidPlush(kid, { mood: 'happy' })}</div></div>
     <div class="sub msg">Ganz still liegen lassen …</div>`;
   say('Leg mich auf den Tisch oder den Boden.');
   await sleep(1600);
@@ -121,7 +122,7 @@ export async function startBreak(opts = {}) {
     root.classList.toggle('dance', !!a.music);
     body.innerHTML = `<div class="progress">${dots}</div>
       <div class="title">${esc(a.t)}</div>
-      <div class="hero"><div class="emoji ${a.freeze ? '' : a.music ? 'spin' : ''}">${a.e}</div><div class="pl ${a.music ? 'dancing' : ''}">${plushSVG(plush)}</div></div>
+      <div class="hero"><div class="emoji ${a.freeze ? '' : a.music ? 'spin' : ''}">${a.e}</div><div class="pl ${a.music ? 'dancing' : ''}">${kidPlush(kid, { mood: 'happy' })}</div></div>
       <div class="row"><div class="timer"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#fff" fill-opacity=".6" stroke="rgba(90,62,43,.15)" stroke-width="10"/><circle class="arc" cx="50" cy="50" r="42" fill="none" stroke="#ff9f1c" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="0"/></svg><div class="n"></div></div>
       <div class="count"></div></div>`;
     [...body.querySelectorAll('.progress i')].forEach((d, i) => d.classList.add(i < idx ? 'done' : i === idx ? 'cur' : 'x'));
@@ -142,7 +143,7 @@ export async function startBreak(opts = {}) {
       // Gerät hochgenommen?
       if (useSensor && sensorWorks() && isMoving() && !liftedEl) {
         stopMusic(false);
-        liftedEl = h(`<div class="lifted"><div class="pl">${plushSVG(plush, { mood: 'sad' })}</div><div class="sub">Leg mich wieder hin!</div></div>`);
+        liftedEl = h(`<div class="lifted"><div class="pl">${kidPlush(kid, { mood: 'sad' })}</div><div class="sub">Leg mich wieder hin!</div></div>`);
         root.appendChild(liftedEl);
         say(`Hey${pname ? '' : ''}! Leg mich wieder hin, ich will dir zuschauen!`);
       }
@@ -184,7 +185,7 @@ export async function startBreak(opts = {}) {
   starRain(30);
   sfx.tada();
   body.innerHTML = `<div class="title">Super gemacht, ${esc(kid.name)}!</div>
-    <div class="hero"><div class="pl jump">${plushSVG(plush)}</div><div class="emoji">⭐</div></div>
+    <div class="hero"><div class="pl jump">${kidPlush(kid, { mood: 'happy' })}</div><div class="emoji">⭐</div></div>
     <div class="sub">+${n} Sterne</div>
     <div class="row"><button class="btn go big" aria-label="Weiterspielen">${ICON.play}</button></div>`;
   say(`Super gemacht, ${kid.name}! Du bekommst ${n} Sterne!`);
@@ -199,7 +200,7 @@ export function showSleep(kid) {
   stopMusic();
   const stars = Array.from({ length: 14 }, () => `<span class="star" style="left:${Math.random() * 96}%;top:${Math.random() * 40}%;animation-delay:${Math.random() * 2}s">✦</span>`).join('');
   const root = h(`<div class="sleepy">${stars}
-    <div class="bed"><div class="pl">${plushSVG(kid.plush || 'baer', { mood: 'sleep' })}</div><div class="frame"></div></div>
+    <div class="bed"><div class="pl">${kidPlush(kid, { mood: 'sleep' })}</div><div class="frame"></div></div>
     <h2>Gute Nacht! Morgen spielen wir weiter.</h2></div>`);
   document.getElementById('overlay-root').appendChild(root);
   active = { cancel() {} };

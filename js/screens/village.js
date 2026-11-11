@@ -6,6 +6,7 @@ import { sirchHouseScene } from '../art/village.js';
 import { personSVG, FAMILY } from '../art/person.js';
 import { plushSVG, PLUSH } from '../art/plush.js';
 import { baileySVG } from '../art/bailey.js';
+import { kidPlush, petMood, lowestNeed } from '../pet.js';
 import { say } from '../speech.js';
 import { sfx, playMusic, unlockAudio } from '../audio.js';
 import { askPin } from '../pin.js';
@@ -28,7 +29,7 @@ register('village', (app, params) => {
       <button class="kid-badge" style="--kid:${kid.color};color:${kidColorDark(kid.color)}" aria-label="Kind wechseln"><span class="face">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</span>${esc(name)}</button>
       <button class="star-badge" aria-label="Sterne">${ICON.star}<span>${kid.stars}</span></button>
       <span class="spacer"></span>
-      <button class="btn round ghost" data-a="plush" aria-label="Kuscheltier">${plushSVG(kid.plush, {})}</button>
+      <button class="btn round ghost" data-a="plush" aria-label="Kuscheltier">${kidPlush(kid, { mood: 'happy' })}</button>
       <button class="btn round ghost" data-a="dress" aria-label="Umziehen">${ICON.hanger}</button>
     </div>
     <button class="parent-lock" aria-label="Elternbereich">${ICON.lock}</button>
@@ -40,8 +41,8 @@ register('village', (app, params) => {
 
   // ---------- Figuren platzieren ----------
   $w('terrace-people').innerHTML =
-    nest(872, 446, 120, 175, personSVG(FAMILY.papa), 'hot fam-papa', 'papa') +
-    nest(962, 432, 120, 175, personSVG(FAMILY.mama), 'hot fam-mama', 'mama');
+    nest(790, 456, 120, 175, personSVG(FAMILY.papa), 'hot fam-papa', 'papa') +
+    nest(1046, 420, 120, 175, personSVG(FAMILY.mama), 'hot fam-mama', 'mama');
   $w('gp-auerbach').innerHTML =
     nest(318, 398, 78, 114, personSVG(FAMILY.opaAuerbach), 'hot gp-oa', 'opaAuerbach') +
     nest(362, 404, 78, 114, personSVG(FAMILY.omaAuerbach), 'hot gp-ma', 'omaAuerbach');
@@ -51,7 +52,7 @@ register('village', (app, params) => {
   const drawKid = (mood = 'happy', pose = 'stand') =>
     ($w('kid-layer').innerHTML =
       nest(560, 600, 150, 219, personSVG({ ...kid.avatar, scale: 0.74 }, { mood, pose }), 'hot me', 'kid') +
-      nest(668, 716, 104, 108, plushSVG(kid.plush), 'hot my-plush', 'plush'));
+      nest(668, 716, 104, 108, kidPlush(kid), 'hot my-plush', 'plush'));
   drawKid();
 
   // ---------- Bailey läuft herum ----------
@@ -112,7 +113,11 @@ register('village', (app, params) => {
       sfx[sounds[kid.plush] || 'giggle']();
       g.classList.remove('jump'); void g.getBBox(); g.classList.add('jump');
       svgFloat(fx, p.x, p.y - 60, '💕', 2);
-      say(pick([`Ich hab dich lieb, ${name}!`, 'Hihi, das kitzelt!', 'Spielen wir was zusammen?', `Ich bin ${pname}! Und du bist mein bester Freund!`, 'Nochmal, nochmal!']));
+      const mood = petMood(kid);
+      if (mood !== 'happy') {
+        const need = { hunger: 'Ich hab Hunger!', clean: 'Ich bin so schmutzig!', energy: 'Ich bin müde …', fun: 'Mir ist langweilig!', love: 'Ich will kuscheln!' }[lowestNeed(kid)];
+        say(`${need} Gehst du mit mir ins Haus, ins Kinderzimmer?`);
+      } else say(pick([`Ich hab dich lieb, ${name}!`, 'Hihi, das kitzelt!', 'Spielen wir was zusammen?', `Ich bin ${pname}! Und du bist mein bester Freund!`, 'Nochmal, nochmal!']));
     },
     papa() { sfx.pop(); greetFamily('fam-papa', pick([`Hallo ${name}! Gib mir fünf!`, `Servus ${name}! Ich hab dich lieb!`, 'Na, du kleiner Wirbelwind!'])); },
     mama() { sfx.pop(); greetFamily('fam-mama', pick([`Hallo mein Schatz! Ich hab dich lieb!`, `${name}, komm her, du bekommst ein Bussi!`, 'Schön, dass du da bist!'])); },
@@ -145,8 +150,9 @@ register('village', (app, params) => {
       if (open) say('Da ist dein Fahrrad! Bald machen wir eine Fahrradtour durchs Dorf.');
     },
     shed(g) { const d = g.querySelector('.shed-door'); d.classList.toggle('open'); sfx.door(); if (d.classList.contains('open')) say('Im Schuppen wohnen die Gartensachen. Bald gibt es hier was zu entdecken!'); },
-    house() { sfx.door(); say(`Das ist euer Haus! Bald kannst du hier drinnen mit ${pname} spielen.`); },
-    terrace() { sfx.pop(); say('Auf der Terrasse ist es so gemütlich!'); },
+    house() { sfx.door(); go('house', {}); },
+    terrace() { sfx.pop(); go('memory', {}); },
+    easel() { sfx.pop(); go('paint', {}); },
   };
 
   world.addEventListener('click', (e) => {
@@ -156,7 +162,7 @@ register('village', (app, params) => {
     const p = toWorld(e);
     const act = ACTIONS[g.dataset.hot];
     if (!act) return;
-    if (!['plush', 'kid', 'bailey'].includes(g.dataset.hot)) wiggle(g);
+    if (!['plush', 'kid', 'bailey', 'house', 'terrace', 'easel'].includes(g.dataset.hot)) wiggle(g);
     act(g, p);
   });
 

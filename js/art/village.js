@@ -104,6 +104,22 @@ function cow(x, y, s, id) {
   </g></g>`;
 }
 
+export function gameBadge(x, y, emoji) {
+  return `<g class="room-badge" transform="translate(${x} ${y})"><g class="rb-in"><circle r="36" fill="#fffdf7" ${SW}/><text y="14" text-anchor="middle" font-size="38">${emoji}</text></g></g>`;
+}
+
+function easel() {
+  return `<g transform="translate(450 712)"><g class="hot" data-hot="easel">
+    <ellipse cx="0" cy="6" rx="56" ry="10" fill="#000" opacity=".1"/>
+    <g ${SW} fill="#b8794c"><path d="M-40 4 L-10 -150 L-2 -150 L-30 4 Z"/><path d="M40 4 L10 -150 L2 -150 L30 4 Z"/><path d="M-3 -150 h6 l4 120 h-14 Z"/></g>
+    <rect x="-52" y="-150" width="104" height="84" rx="6" fill="#fff" ${SW}/>
+    <path d="M-40 -90 q20 -40 40 -10 t40 -20" stroke="#ff6f91" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="-24" cy="-126" r="12" fill="#ffd23f"/><path d="M10 -120 l12 -14 l12 14 Z" fill="#7cc4ff"/><path d="M-44 -76 h88" stroke="#8fdc4a" stroke-width="7" stroke-linecap="round"/>
+    <rect x="-56" y="-70" width="112" height="10" rx="4" fill="#a96a42" ${SW}/>
+    <g transform="translate(48 -10)"><ellipse rx="26" ry="18" fill="#f3d6a8" ${SW}/><circle cx="-10" cy="-6" r="5" fill="#ff4d4d"/><circle cx="4" cy="-9" r="5" fill="#4fa3ff"/><circle cx="12" cy="2" r="5" fill="#ffd23f"/><circle cx="-6" cy="6" r="5" fill="#8fdc4a"/></g>
+    ${gameBadge(0, -196, '🎨')}
+  </g></g>`;
+}
+
 export function sirchHouseScene() {
   // ---------- Hintergrund ----------
   let s = `<defs>
@@ -180,7 +196,7 @@ export function sirchHouseScene() {
     sideContent: `${windowRect(812, 452, 60, 72)}${windowRect(996, 452, 60, 72)}
       <rect x="896" y="470" width="78" height="140" rx="4" fill="#3d434c" ${SW2}/><rect x="903" y="477" width="64" height="133" fill="#9fd0f2"/><path d="M935 477 V610" stroke="#3d434c" stroke-width="4"/>
       <path d="M908 600 L930 490" stroke="#fff" stroke-width="5" opacity=".6"/>`,
-  })}</g>`;
+  })}${gameBadge(690, 262, '🧸')}</g>`;
 
   // Terrasse mit Pergola (vor der langen Seite)
   const sl = 0.18;
@@ -201,9 +217,10 @@ export function sirchHouseScene() {
     <!-- Tisch & Stühle -->
     <g transform="translate(${tx(210)} ${ty(210, 40)})"><rect x="-50" y="-44" width="100" height="10" rx="3" fill="#c98b55" ${SW2}/><rect x="-44" y="-34" width="7" height="34" fill="#a96a42"/><rect x="37" y="-34" width="7" height="34" fill="#a96a42"/>
       <rect x="-80" y="-48" width="8" height="48" fill="#a96a42"/><rect x="-80" y="-22" width="28" height="7" fill="#c98b55"/><rect x="72" y="-48" width="8" height="48" fill="#a96a42"/><rect x="52" y="-22" width="28" height="7" fill="#c98b55"/>
-      <circle cx="-20" cy="-52" r="7" fill="#fff" ${SW2}/><path d="M10 -46 q0 -16 14 -16 q14 0 14 16 Z" fill="#8bd46e" ${SW2}/></g>
+      <g ${SW2}><rect x="-40" y="-56" width="18" height="13" rx="3" fill="#ff9fb2"/><rect x="-18" y="-58" width="18" height="13" rx="3" fill="#ff9fb2"/><rect x="4" y="-56" width="18" height="13" rx="3" fill="#fff"/><rect x="26" y="-58" width="18" height="13" rx="3" fill="#ff9fb2"/></g></g>
     <g transform="translate(${tx(305)} ${ty(305, 30)})"><path d="M-14 0 L-18 -26 H18 L14 0 Z" fill="#d9744a" ${SW2}/><circle cx="-8" cy="-40" r="14" fill="#5fb84a" ${SW2}/><circle cx="8" cy="-46" r="14" fill="#6cc24a" ${SW2}/><circle cx="0" cy="-58" r="12" fill="#7fd05a" ${SW2}/></g>
     <g id="terrace-people"></g>
+    ${gameBadge(tx(210), ty(210, 40) - 110, '🃏')}
   </g>`;
 
   // Schaukel
@@ -212,6 +229,8 @@ export function sirchHouseScene() {
     <g ${SW} fill="#b8794c"><path d="M-80 6 L-56 -170 L-44 -170 L-66 6 Z"/><path d="M80 6 L56 -170 L44 -170 L66 6 Z"/><rect x="-68" y="-182" width="136" height="16" rx="6"/></g>
     <g class="swing-seat" style="transform-origin:0px -168px"><path d="M-26 -166 V-46 M26 -166 V-46" stroke="#6b4a32" stroke-width="4"/><rect x="-36" y="-50" width="72" height="12" rx="5" fill="#c98b55" ${SW}/></g>
   </g></g>`;
+
+  s += easel();
 
   // Trittsteine
   for (const [x, y] of [[760, 880], [720, 840], [700, 798], [720, 760], [770, 728], [820, 700]]) s += `<ellipse cx="${x}" cy="${y}" rx="30" ry="12" fill="#d2c3a8" ${SW2}/>`;

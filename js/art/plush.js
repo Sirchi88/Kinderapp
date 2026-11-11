@@ -228,12 +228,46 @@ const DRAW = {
   },
 };
 
-/** SVG eines Kuscheltiers. mood: 'happy' | 'sad' | 'sleep' | 'eat' */
+// ---------- Kleidung für Kuscheltiere ----------
+// Position von Kopf-Oberkante, Augen und Hals je Tier
+const ANCHOR = { gelbi: [30, 88, 140], rassel: [22, 84, 132], kueken: [42, 92, 150], pinguin: [36, 86, 138], schaf: [20, 88, 132], puppe: [32, 88, 132], pavian: [34, 80, 128], loewe: [32, 80, 128], tukan: [34, 80, 128], elefant: [36, 76, 128], pony: [32, 76, 132], kuh: [36, 76, 132] };
+export const OUTFIT = {
+  hat: ['muetze', 'krone', 'zylinder', 'blume', 'cowboy', 'party'],
+  eyes: ['brille', 'sonne', 'herz'],
+  neck: ['schal', 'fliege', 'halstuch', 'kette'],
+};
+function outfitSVG(type, o = {}) {
+  const [hy, ey, ny] = ANCHOR[type] || [36, 84, 128];
+  let s = '';
+  switch (o.neck) {
+    case 'schal': s += `<g transform="translate(100 ${ny})"><path d="M-44 -6 Q0 14 44 -6 L42 10 Q0 30 -42 10 Z" fill="#ff6f6f" ${SW}/><path d="M18 8 l10 34 l14 -6 l-8 -30" fill="#ff6f6f" ${SW}/><path d="M-30 4 v12 M-10 10 v12 M10 10 v12" stroke="#fff" stroke-width="4"/></g>`; break;
+    case 'fliege': s += `<g transform="translate(100 ${ny})"><path d="M0 0 L-24 -12 L-24 12 Z M0 0 L24 -12 L24 12 Z" fill="#7c5cff" ${SW}/><circle r="7" fill="#9b8cff" ${SW}/></g>`; break;
+    case 'halstuch': s += `<g transform="translate(100 ${ny - 4})"><path d="M-40 -4 Q0 8 40 -4 L0 34 Z" fill="#4fa3ff" ${SW}/><circle cx="-12" cy="8" r="3" fill="#fff"/><circle cx="10" cy="10" r="3" fill="#fff"/><circle cx="0" cy="22" r="3" fill="#fff"/></g>`; break;
+    case 'kette': s += `<g transform="translate(100 ${ny - 2})"><path d="M-36 -4 Q0 22 36 -4" fill="none" stroke="#ffd23f" stroke-width="4"/>${[-28, -14, 0, 14, 28].map((x, i) => `<circle cx="${x}" cy="${6 + (x === 0 ? 7 : Math.abs(x) < 20 ? 4 : 0)}" r="5" fill="${['#ff9ccc', '#7cc4ff', '#ffd23f', '#9be37a', '#c6a8ff'][i]}" stroke="#5a3e2b" stroke-width="2"/>`).join('')}</g>`; break;
+  }
+  switch (o.eyes) {
+    case 'brille': s += `<g transform="translate(100 ${ey})" fill="#fff" fill-opacity=".25" stroke="#3a3d44" stroke-width="4"><circle cx="-20" r="14"/><circle cx="20" r="14"/><path d="M-6 0 h12" fill="none"/></g>`; break;
+    case 'sonne': s += `<g transform="translate(100 ${ey})" ${SW}><path d="M-38 -10 h30 q4 0 4 4 q0 16 -16 16 q-18 0 -18 -16 Z M38 -10 h-30 q-4 0 -4 4 q0 16 16 16 q18 0 18 -16 Z" fill="#2a2b38"/><path d="M-8 -6 h16" fill="none"/><path d="M-30 -4 l8 0" stroke="#fff" stroke-width="3"/><path d="M14 -4 l8 0" stroke="#fff" stroke-width="3"/></g>`; break;
+    case 'herz': s += `<g transform="translate(100 ${ey})" ${SW}>${[-20, 20].map((x) => `<path transform="translate(${x} 0)" d="M0 12 C-18 0 -16 -14 -6 -14 C-2 -14 0 -10 0 -8 C0 -10 2 -14 6 -14 C16 -14 18 0 0 12 Z" fill="#ff5a8a" fill-opacity=".85"/>`).join('')}<path d="M-6 -4 h12" fill="none"/></g>`; break;
+  }
+  switch (o.hat) {
+    case 'muetze': s += `<g transform="translate(100 ${hy})"><path d="M-40 10 C-40 -40 40 -40 40 10 Z" fill="#4fa3ff" ${SW}/><rect x="-44" y="2" width="88" height="16" rx="8" fill="#ffd23f" ${SW}/><circle cy="-34" r="12" fill="#fff" ${SW}/></g>`; break;
+    case 'krone': s += `<g transform="translate(100 ${hy})"><path d="M-30 10 L-34 -22 L-16 -6 L0 -30 L16 -6 L34 -22 L30 10 Z" fill="#ffd23f" ${SW}/><circle cy="0" r="5" fill="#ff6f91"/><circle cx="-18" cy="3" r="3.5" fill="#6fd3c7"/><circle cx="18" cy="3" r="3.5" fill="#6fd3c7"/></g>`; break;
+    case 'zylinder': s += `<g transform="translate(100 ${hy})"><rect x="-44" y="2" width="88" height="12" rx="6" fill="#2f3238" ${SW}/><rect x="-28" y="-44" width="56" height="50" rx="6" fill="#2f3238" ${SW}/><rect x="-28" y="-6" width="56" height="9" fill="#ff6f91"/></g>`; break;
+    case 'blume': s += `<g transform="translate(130 ${hy + 6})">${[0, 72, 144, 216, 288].map((r) => `<ellipse rx="9" ry="13" cy="-11" transform="rotate(${r})" fill="#ff9ccc" stroke="#5a3e2b" stroke-width="2.5"/>`).join('')}<circle r="8" fill="#ffd23f" stroke="#5a3e2b" stroke-width="2.5"/></g>`; break;
+    case 'cowboy': s += `<g transform="translate(100 ${hy})"><path d="M-60 8 Q-40 22 0 18 Q40 22 60 8 Q40 0 0 2 Q-40 0 -60 8 Z" fill="#c98b55" ${SW}/><path d="M-30 6 C-30 -36 -10 -28 0 -22 C10 -28 30 -36 30 6 Z" fill="#c98b55" ${SW}/><path d="M-28 -2 Q0 6 28 -2" stroke="#7a4a2c" stroke-width="5" fill="none"/></g>`; break;
+    case 'party': s += `<g transform="translate(100 ${hy})"><path d="M-22 8 L0 -50 L22 8 Z" fill="#9b8cff" ${SW}/><path d="M-14 -12 l10 4 M-6 -32 l8 4 M6 -2 l8 4" stroke="#ffd23f" stroke-width="5" stroke-linecap="round"/><circle cy="-52" r="8" fill="#ff6f91" ${SW}/></g>`; break;
+  }
+  return s;
+}
+
+/** SVG eines Kuscheltiers. mood: 'happy' | 'sad' | 'sleep' | 'eat'; outfit: {hat, eyes, neck} */
 export function plushSVG(type, opt = {}) {
   const p = PLUSH[type] || PLUSH.baer;
   const m = opt.mood || 'happy';
   const draw = DRAW[type] || DRAW.baer;
-  return `<svg class="plush ${opt.cls || ''}" viewBox="0 -10 200 210" xmlns="http://www.w3.org/2000/svg" overflow="visible"><g class="pl-bob">${draw(p, m)}</g>${m === 'sleep' ? '<g class="zzz"><text x="150" y="30">z</text><text x="166" y="10">z</text><text x="182" y="-8">Z</text></g>' : ''}</svg>`;
+  const outfit = opt.outfit ? outfitSVG(type, opt.outfit) : '';
+  return `<svg class="plush ${opt.cls || ''}" viewBox="0 -10 200 210" xmlns="http://www.w3.org/2000/svg" overflow="visible"><g class="pl-bob">${draw(p, m)}${outfit}</g>${m === 'sleep' ? '<g class="zzz"><text x="150" y="30">z</text><text x="166" y="10">z</text><text x="182" y="-8">Z</text></g>' : ''}</svg>`;
 }
 
 const ARTIKEL = { wildschwein: 'das', rassel: 'die', gelbi: 'das', puppe: 'die', einhorn: 'das', schaf: 'das', pony: 'das', schwein: 'das', kueken: 'das', kuh: 'die', faultier: 'das' };

@@ -7,12 +7,14 @@ import { say, hush } from '../speech.js';
 import { BREAK_TYPES } from '../activities.js';
 import { askPin } from '../pin.js';
 import { PLUSH } from '../art/plush.js';
+import { listPhotos, addPhoto, deletePhoto, listDrawings, deleteDrawing, fileToSquare } from '../media.js';
 
 const TABS = [
   { id: 'kids', icon: '👧', label: 'Kinder' },
   { id: 'breaks', icon: '🏃', label: 'Bewegungspausen' },
   { id: 'time', icon: '⏱️', label: 'Spielzeit' },
   { id: 'rewards', icon: '🎁', label: 'Belohnungen' },
+  { id: 'photos', icon: '📷', label: 'Fotos & Bilder' },
   { id: 'sound', icon: '🔊', label: 'Ton & Stimme' },
   { id: 'stats', icon: '📊', label: 'Übersicht' },
   { id: 'safety', icon: '🔒', label: 'PIN & Daten' },
@@ -40,9 +42,18 @@ const VIEWS = {
             <select data-bday="${i}" data-part="d"><option value="">Tag</option>${Array.from({ length: 31 }, (_, d) => `<option ${+dd === d + 1 ? 'selected' : ''} value="${String(d + 1).padStart(2, '0')}">${d + 1}.</option>`).join('')}</select>
             <select data-bday="${i}" data-part="m"><option value="">Monat</option>${MONTHS.map((m, j) => `<option ${+mm === j + 1 ? 'selected' : ''} value="${String(j + 1).padStart(2, '0')}">${m}</option>`).join('')}</select></div>
           <div class="field"><label>Name des Kuscheltiers <small>${k.plush ? PLUSH[k.plush].art : 'noch keins ausgesucht'}</small></label><input type="text" maxlength="14" value="${esc(k.plushName)}" data-p="kids.${i}.plushName" ${k.plush ? '' : 'disabled'}></div>
+          <div class="field"><label>Kuscheltier-Pflege zurücksetzen <small>Alle Bedürfnisse wieder auf voll</small></label><button class="pbtn" data-act="petfull" data-i="${i}">Auffüllen</button></div>
           <div class="field"><label>Figur & Kuscheltier neu aussuchen <small>Beim nächsten Start wird neu gestaltet</small></label><button class="pbtn" data-act="redo" data-i="${i}">Neu gestalten</button></div>
         </div>`;
-      }).join('');
+      }).join('') +
+      `<div class="box"><h3>🧸 Tamagotchi</h3><div class="field"><label>Kuscheltier darf traurig werden <small>Wenn es lange nicht gefüttert, gebadet oder geknuddelt wurde. Es wird nie krank.</small></label>${toggle('settings.petSad')}</div></div>`;
+  },
+
+  photos() {
+    return `<h2>Fotos & Bilder</h2><p class="hint">Eure Fotos erscheinen im Memory (ab 3 Fotos). Sie bleiben nur auf diesem Gerät. Tipp: Gesichter von Oma, Opa, Bailey, Kuscheltieren …</p>
+      <div class="box"><h3>📷 Fotos für Memory</h3><div class="thumbs" id="ph-list"><span class="hint">Lädt …</span></div>
+        <div class="field"><label>Fotos hinzufügen <small>Werden quadratisch zugeschnitten</small></label><label class="pbtn go" style="cursor:pointer">+ Fotos wählen<input type="file" accept="image/*" multiple id="ph-add" hidden></label></div></div>
+      <div class="box"><h3>🎨 Gemalte Bilder</h3><div class="thumbs wide" id="dr-list"><span class="hint">Lädt …</span></div></div>`;
   },
 
   breaks() {
@@ -149,6 +160,7 @@ export function openParents() {
     const st = main.scrollTop;
     main.innerHTML = VIEWS[tab]();
     main.scrollTop = st;
+    if (tab === 'photos') loadMedia();
   };
   const changed = (rerender = false) => { save(); applyVolumes(); if (rerender) render(); };
 
@@ -170,6 +182,9 @@ export function openParents() {
         break;
       }
       case 'testbreak': close(true); break;
+      case 'petfull': { const k = state.kids[i]; k.pet = { hunger: 100, clean: 100, energy: 100, fun: 100, love: 100, t: Date.now() }; changed(); sfx.sparkle(); break; }
+      case 'delphoto': if (confirm('Foto löschen?')) { await deletePhoto(a.dataset.id); loadMedia(); } break;
+      case 'deldrawing': if (confirm('Bild löschen?')) { await deleteDrawing(a.dataset.id); loadMedia(); } break;
       case 'addidea': {
         const text = main.querySelector('#idea-text').value.trim();
         if (!text) return;
@@ -204,8 +219,21 @@ export function openParents() {
       changed();
     }
   });
-  el.addEventListener('change', (e) => {
+  async function loadMedia() {
+    const pl = main.querySelector('#ph-list'), dl = main.querySelector('#dr-list');
+    if (!pl) return;
+    const [ph, dr] = await Promise.all([listPhotos(), listDrawings()]);
+    pl.innerHTML = ph.map((p) => `<div class="th"><img src="${p.data}" alt=""><button class="x" data-act="delphoto" data-id="${p.id}">✕</button></div>`).join('') || '<span class="hint">Noch keine Fotos.</span>';
+    dl.innerHTML = dr.slice().reverse().map((d) => `<div class="th"><img src="${d.data}" alt=""><small>${esc(state.kids.find((k) => k.id === d.kid)?.name || '')}</small><button class="x" data-act="deldrawing" data-id="${d.id}">✕</button></div>`).join('') || '<span class="hint">Noch keine gemalten Bilder.</span>';
+  }
+  el.addEventListener('change', async (e) => {
     const t = e.target;
+    if (t.id === 'ph-add') {
+      for (const f of t.files) { try { await addPhoto(await fileToSquare(f)); } catch (err) { console.warn(err); } }
+      t.value = '';
+      loadMedia();
+      return;
+    }
     if (t.matches('input[type=text][data-p]')) { set(t.dataset.p, t.value.trim() || get(t.dataset.p)); changed(); }
     else if (t.matches('input[type=number][data-p]')) { set(t.dataset.p, Math.max(1, Math.round(+t.value) || 1)); changed(); }
     else if (t.matches('select[data-bday]')) {

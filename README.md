@@ -16,6 +16,16 @@ Das ganze Konzept steht in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 - **Elternbereich** (Schloss 1,5 s gedrückt halten + PIN)
 - Selbst komponierte Musik und Geräusche, deutsche Sprachausgabe
 
+## Etappe 2 – Erste Spiele
+- **Haus von innen** (Puppenhaus-Ansicht): Kinderzimmer, Bad, Wohnzimmer, Küche
+- **Tamagotchi** im Kinderzimmer: füttern (mit Lieblingsessen), baden mit Schwamm & Dusche, Zähne putzen, schlafen legen, Ball spielen, anziehen (Hüte, Brillen, Schals), kuscheln. Bedürfnisse sinken mit der echten Zeit.
+- **Memory** am Terrassentisch: Kuscheltiere, Familie oder eigene Fotos, allein oder zu zweit (mit Schwester, Mama oder Papa)
+- **Malen** an der Staffelei: 6 Ausmalbilder (Bailey, unser Haus, Allgäuer Kuh, Einhorn, Schmetterling, Fisch) oder freies Malen, Regenbogen-Pinsel, Stempel, Galerie
+- **Zähneputzen-Monster** im Bad: 4 Monster, Schmutz & Bakterien wegputzen, ausspülen
+- **Musik & Tanzen** im Wohnzimmer: Xylophon, Schlagzeug mit Kuhglocke, Tierorchester, Lieder lernen (Alle meine Entchen, Hänschen klein, Sirchhausen-Lied), Tanz-Party
+- Alle Spiele: leicht/schwer selbst wählen, Schwierigkeit steigt mit jedem Erfolg, Sterne als Belohnung
+- Elternbereich: Fotos für Memory hochladen, gemalte Bilder verwalten
+
 ## Lokal starten
 ```bash
 python3 -m http.server 8000

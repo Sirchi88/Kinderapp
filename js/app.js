@@ -9,6 +9,12 @@ import './screens/profiles.js';
 import './screens/editor.js';
 import './screens/plushpick.js';
 import './screens/village.js';
+import './screens/house.js';
+import './games/tamagotchi.js';
+import './games/memory.js';
+import './games/paint.js';
+import './games/teeth.js';
+import './games/music.js';
 
 // Sprechblase zeigt, was gerade gesagt wird – mit dem Kuscheltier des Kindes
 onSay((text) => showBubble(text, session.kid?.plush || 'baer'));

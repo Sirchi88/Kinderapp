@@ -91,6 +91,33 @@ export const sfx = {
   rattle() { if (!ctx) return; const t = ctx.currentTime; for (let i = 0; i < 6; i++) noise(t + i * 0.07, 0.05, { gain: 0.2, type: 'highpass', freq: 3500 }); },
   yawn() { if (!ctx) return; const t = ctx.currentTime; tone(420, t, 1.0, { type: 'sine', gain: 0.15, slideTo: 200 }); },
   door() { if (!ctx) return; const t = ctx.currentTime; tone(220, t, 0.3, { type: 'square', gain: 0.04, slideTo: 300, filter: 700 }); },
+  scrub() { if (!ctx) return; noise(ctx.currentTime, 0.09, { gain: 0.08, type: 'bandpass', freq: 2400 + Math.random() * 1500, q: 2 }); },
+  chomp() { if (!ctx) return; const t = ctx.currentTime; noise(t, 0.06, { gain: 0.15, type: 'lowpass', freq: 900 }); tone(140, t, 0.08, { type: 'square', gain: 0.05, filter: 500 }); },
+  note(n, inst = 'xylo') {
+    if (!ctx) return; const t = ctx.currentTime;
+    if (inst === 'xylo') { tone(n, t, 0.9, { type: 'sine', gain: 0.22 }); tone(hz(n) * 4, t, 0.12, { type: 'sine', gain: 0.05 }); tone(hz(n) * 2.76, t, 0.2, { type: 'sine', gain: 0.04 }); }
+    else tone(n, t, 0.6, { type: 'triangle', gain: 0.16 });
+  },
+  kick() { if (!ctx) return; tone(160, ctx.currentTime, 0.35, { type: 'sine', gain: 0.6, slideTo: 40 }); },
+  snare() { if (!ctx) return; const t = ctx.currentTime; noise(t, 0.18, { gain: 0.3, type: 'highpass', freq: 1500 }); tone(220, t, 0.1, { type: 'triangle', gain: 0.12 }); },
+  tom(f = 140) { if (!ctx) return; tone(f, ctx.currentTime, 0.4, { type: 'sine', gain: 0.4, slideTo: f * 0.6 }); },
+  cymbal() { if (!ctx) return; noise(ctx.currentTime, 1.1, { gain: 0.14, type: 'highpass', freq: 6000 }); },
+  cowbell() { if (!ctx) return; const t = ctx.currentTime; tone(560, t, 0.5, { type: 'square', gain: 0.06, filter: 1800 }); tone(845, t, 0.5, { type: 'square', gain: 0.05, filter: 2000 }); },
+  shaker() { if (!ctx) return; const t = ctx.currentTime; noise(t, 0.08, { gain: 0.15, type: 'highpass', freq: 5000 }); noise(t + 0.12, 0.08, { gain: 0.12, type: 'highpass', freq: 5000 }); },
+  peep() { if (!ctx) return; const t = ctx.currentTime; for (let i = 0; i < 3; i++) tone(2200, t + i * 0.13, 0.09, { type: 'sine', gain: 0.12, slideTo: 3000 }); },
+  oink() { if (!ctx) return; const t = ctx.currentTime; for (let i = 0; i < 2; i++) { tone(180, t + i * 0.22, 0.16, { type: 'sawtooth', gain: 0.12, slideTo: 140, filter: 900 }); noise(t + i * 0.22, 0.12, { gain: 0.08, type: 'bandpass', freq: 500, q: 3 }); } },
+  baa() {
+    if (!ctx) return; const t = ctx.currentTime;
+    const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(), l = ctx.createOscillator(), lg = ctx.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(380, t); o.frequency.linearRampToValueAtTime(330, t + 0.9);
+    l.frequency.value = 9; lg.gain.value = 18; l.connect(lg); lg.connect(o.frequency);
+    f.type = 'bandpass'; f.frequency.value = 1100; f.Q.value = 1.5;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.08); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.95);
+    o.connect(f); f.connect(g); g.connect(sfxBus); o.start(t); l.start(t); o.stop(t + 1); l.stop(t + 1);
+  },
+  squawk() { if (!ctx) return; const t = ctx.currentTime; tone(900, t, 0.18, { type: 'sawtooth', gain: 0.1, slideTo: 1400, filter: 2500 }); tone(1300, t + 0.2, 0.2, { type: 'sawtooth', gain: 0.08, slideTo: 800, filter: 2500 }); },
+  trumpet() { if (!ctx) return; const t = ctx.currentTime; tone(300, t, 0.7, { type: 'sawtooth', gain: 0.12, slideTo: 520, filter: 1600 }); },
+  roar() { if (!ctx) return; const t = ctx.currentTime; noise(t, 0.8, { gain: 0.25, type: 'lowpass', freq: 500 }); tone(110, t, 0.8, { type: 'sawtooth', gain: 0.1, slideTo: 70, filter: 400 }); },
   tick() { if (!ctx) return; tone(1200, ctx.currentTime, 0.04, { type: 'sine', gain: 0.08 }); },
   wrong() { if (!ctx) return; const t = ctx.currentTime; tone(330, t, 0.18, { gain: 0.12 }); tone(262, t + 0.16, 0.3, { gain: 0.12 }); },
 };
