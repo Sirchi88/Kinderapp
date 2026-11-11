@@ -69,6 +69,7 @@ function house(o) {
     s += `<path d="M${a} L${b}" stroke="${shade(roof, -22)}" stroke-width="2.5"/>`;
   }
   s += o.roofContent ? o.roofContent({ P, C, Cp, Pp, rp }) : '';
+  if (WINTER) s += snowCap(`M${rp[0]} L${rp[3]}`, 18) + snowCap(`M${rp[3]} L${rp[2]}`, 12);
   s += `<path d="M${x - 14},${y + 12} L${P[0]},${P[1] - 8} L${C[0] + 14},${C[1] + 12}" fill="none" stroke="${shade(roof, -30)}" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>`;
   s += `<path d="M${x - 14},${y + 12} L${P[0]},${P[1] - 8} L${C[0] + 14},${C[1] + 12}" fill="none" stroke="${OUT}" stroke-width="2" stroke-linejoin="round" transform="translate(0 7)"/>`;
   if (o.chimney) s += `<g ${SW}><rect x="${o.chimney[0]}" y="${o.chimney[1]}" width="22" height="40" fill="#b7745a"/><rect x="${o.chimney[0] - 4}" y="${o.chimney[1] - 6}" width="30" height="9" fill="#8f5a46"/></g><g class="smoke"><circle cx="${o.chimney[0] + 11}" cy="${o.chimney[1] - 18}" r="8"/><circle cx="${o.chimney[0] + 18}" cy="${o.chimney[1] - 36}" r="11"/><circle cx="${o.chimney[0] + 8}" cy="${o.chimney[1] - 58}" r="13"/></g>`;
@@ -120,7 +121,57 @@ function easel() {
   </g></g>`;
 }
 
-export function sirchHouseScene() {
+let WINTER = false;
+
+function barn() {
+  return `<g transform="translate(470 444) scale(.5)"><g class="hot" data-hot="farm">
+    <ellipse cx="110" cy="6" rx="150" ry="16" fill="#000" opacity=".1"/>
+    <path d="M0 0 V-120 L110 -190 L220 -120 V0 Z" fill="#d9534f" ${SW}/>
+    <path d="M-14 -116 L110 -204 L234 -116" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="70" y="-90" width="80" height="90" fill="#b8433f" ${SW}/><path d="M70 -90 L150 0 M150 -90 L70 0" stroke="#fff" stroke-width="7"/><rect x="70" y="-90" width="80" height="90" fill="none" stroke="#fff" stroke-width="7"/>
+    <circle cx="110" cy="-136" r="18" fill="#fff6c9" ${SW}/><path d="M110 -150 V-122 M96 -136 H124" stroke="${OUT}" stroke-width="3"/>
+    <rect x="236" y="-80" width="44" height="80" rx="20" fill="#e9e2d2" ${SW}/><path d="M236 -60 h44 M236 -36 h44" stroke="#cfc6b2" stroke-width="3"/>
+    ${gameBadge(110, -250, '🐓')}
+  </g></g>`;
+}
+
+function snowCap(d, w = 16) {
+  return `<path d="${d}" fill="none" stroke="#fff" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#dcecf8" stroke-width="3" transform="translate(0 ${w / 2})" stroke-linecap="round"/>`;
+}
+
+function xmasTree(x, y, s = 1) {
+  const cols = ['#ff4d4d', '#ffd23f', '#4fa3ff', '#ff8fc8', '#fff'];
+  let balls = '';
+  [[-30, -60], [24, -80], [-14, -110], [30, -40], [-40, -30], [6, -140], [14, -60], [-20, -170]].forEach(([bx, by], i) => (balls += `<circle class="twinkle" cx="${bx}" cy="${by}" r="7" fill="${cols[i % cols.length]}" style="animation-delay:${i * 0.3}s"/>`));
+  return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cy="4" rx="70" ry="12" fill="#000" opacity=".12"/><rect x="-10" y="-20" width="20" height="24" fill="#8a5c3a" ${SW}/>
+    <path d="M0 -230 L44 -150 L24 -150 L64 -80 L36 -80 L80 -16 L-80 -16 L-36 -80 L-64 -80 L-24 -150 L-44 -150 Z" fill="#3f9a4a" ${SW}/>
+    <path d="M-60 -40 Q0 -20 56 -50 M-44 -100 Q0 -84 40 -112 M-26 -160 Q0 -150 22 -168" stroke="#ffd23f" stroke-width="4" fill="none"/>${balls}
+    <path transform="translate(0 -236)" d="M0 -18 L5 -6 L18 -6 L8 2 L12 15 L0 7 L-12 15 L-8 2 L-18 -6 L-5 -6 Z" fill="#ffd23f" ${SW}/>
+    ${[[-60, -2, '#ff6f91'], [52, -2, '#7cc4ff']].map(([gx, gy, c]) => `<g transform="translate(${gx} ${gy})"><rect x="-18" y="-30" width="36" height="30" rx="4" fill="${c}" ${SW}/><path d="M0 -30 V0 M-18 -16 H18" stroke="#fff" stroke-width="5"/></g>`).join('')}</g>`;
+}
+
+function snowman(x, y) {
+  return `<g transform="translate(${x} ${y})"><g class="hot" data-hot="snowman"><ellipse cy="4" rx="46" ry="10" fill="#000" opacity=".1"/><circle cy="-36" r="40" fill="#fff" ${SW}/><circle cy="-100" r="30" fill="#fff" ${SW}/><circle cy="-148" r="22" fill="#fff" ${SW}/>
+    <path d="M-20 -164 h40 v-24 h-40 Z M-28 -164 h56" fill="#2f3238" ${SW}/><circle cx="-7" cy="-152" r="3" fill="#2a1d14"/><circle cx="7" cy="-152" r="3" fill="#2a1d14"/><path d="M0 -146 l18 5 l-18 3 Z" fill="#ff8a3d"/>
+    <path d="M-22 -126 Q0 -116 22 -126 L24 -116 Q0 -106 -24 -116 Z" fill="#e94e4e" ${SW}/><circle cy="-100" r="4" fill="#2a1d14"/><circle cy="-84" r="4" fill="#2a1d14"/>
+    <path d="M-28 -100 L-58 -124 M28 -100 L58 -126" stroke="#8a5c3a" stroke-width="5" stroke-linecap="round"/></g></g>`;
+}
+
+function adventBoard(x, y) {
+  let doors = '';
+  for (let i = 0; i < 24; i++) doors += `<rect x="${(i % 6) * 26 - 78}" y="${Math.floor(i / 6) * 26 - 110}" width="22" height="22" rx="4" fill="${['#ff6f6f', '#ffd23f', '#7cc4ff', '#8fdc6a'][(i + Math.floor(i / 6)) % 4]}" stroke="#5a3e2b" stroke-width="2"/>`;
+  return `<g transform="translate(${x} ${y})"><g class="hot" data-hot="advent"><rect x="-6" y="-10" width="12" height="20" fill="#8a5c3a"/><rect x="-90" y="-124" width="180" height="120" rx="12" fill="#c98b55" ${SW}/>${doors}
+    <path d="M-90 -124 q30 -14 60 0 q30 -14 60 0 q30 -14 60 0" fill="none" stroke="#3f9a4a" stroke-width="8"/>${gameBadge(0, -170, '🎄')}</g></g>`;
+}
+
+function balloons(x, y, s = 1) {
+  const cols = ['#ff6f91', '#ffd23f', '#7cc4ff', '#b68cff', '#8fdc6a'];
+  return `<g transform="translate(${x} ${y}) scale(${s})"><g class="hot balloons" data-hot="birthday">${[[-24, -150], [10, -170], [34, -140], [-6, -120]].map(([bx, by], i) => `<path d="M0 0 Q${bx / 2} ${by / 2} ${bx} ${by + 30}" stroke="#8a8a8a" stroke-width="2" fill="none"/><g class="balloon" style="animation-delay:${i * 0.4}s"><ellipse cx="${bx}" cy="${by}" rx="20" ry="26" fill="${cols[i]}" ${SW}/><ellipse cx="${bx - 7}" cy="${by - 9}" rx="5" ry="8" fill="#fff" opacity=".6"/></g>`).join('')}
+    <rect x="-18" y="-20" width="36" height="30" rx="4" fill="#ff8fc8" ${SW}/><path d="M0 -20 V10 M-18 -6 H18" stroke="#ffd23f" stroke-width="5"/><path d="M0 -20 q-10 -12 -14 -2 q8 4 14 2 q10 -12 14 -2 q-8 4 -14 2" fill="#ffd23f"/></g></g>`;
+}
+
+export function sirchHouseScene(opt = {}) {
+  WINTER = !!opt.xmas;
   // ---------- Hintergrund ----------
   let s = `<defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset=".55" stop-color="#cdeeff"/><stop offset="1" stop-color="#f1fbff"/></linearGradient>
@@ -140,13 +191,15 @@ export function sirchHouseScene() {
   // Hügel mit Kühen
   s += `<path d="M-20 420 Q200 330 460 380 T900 370 T1340 360 T1620 380 L1620 470 L-20 470 Z" fill="#a8dc7c" stroke="#7fbf5a" stroke-width="3"/>`;
   s += `<path d="M80 392 l600 -20" stroke="#c49a6c" stroke-width="3" stroke-dasharray="2 18" stroke-linecap="round"/>`;
-  s += cow(500, 372, 0.42) + cow(1300, 366, 0.38) + cow(1430, 380, 0.34);
+  s += cow(660, 400, 0.38) + cow(1300, 366, 0.38) + cow(1430, 380, 0.34);
   for (const [x, y, sc] of [[60, 410, 0.45], [160, 400, 0.4], [1500, 400, 0.45], [1560, 410, 0.4], [700, 386, 0.35], [760, 390, 0.32]]) s += roundTree(x, y, sc, '#5fb84a');
   // Wiese
   s += `<rect x="-20" y="430" width="1640" height="490" fill="url(#lawn)"/><rect x="-20" y="430" width="1640" height="490" fill="url(#grass)"/>`;
+  if (WINTER) s += `<path d="M-20 420 Q200 330 460 380 T900 370 T1340 360 T1620 380 L1620 920 L-20 920 Z" fill="#f3f8fd" opacity=".88"/>${Array.from({ length: 30 }, (_, i) => `<ellipse cx="${(i * 137) % 1600}" cy="${460 + ((i * 97) % 440)}" rx="${30 + (i % 4) * 10}" ry="6" fill="#dcebf7"/>`).join('')}`;
   // Dorfweg
   s += `<path d="M-20 500 Q400 470 800 488 T1620 480 L1620 528 Q1200 520 800 534 T-20 548 Z" fill="#e8d3a8" stroke="#cdb183" stroke-width="3"/>`;
 
+  s += barn();
   // ---------- Großeltern ----------
   s += `<g class="hot" data-hot="auerbach">${roundTree(170, 470, 0.7)}${cottage(200, 360, 0.62, '#fff4e2', '#5a8f5c', '#c96f4a')}
      <g transform="translate(250 488)"><rect x="-3" y="-30" width="6" height="34" fill="#8a5c3a"/><rect x="-40" y="-48" width="80" height="26" rx="6" fill="#c98b55" ${SW2}/><text x="0" y="-30" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">Auerbach</text></g>
@@ -164,7 +217,7 @@ export function sirchHouseScene() {
   // Garage
   s += `<g class="hot" data-hot="garage">
     <path d="M440 470 L600 470 L600 610 L440 610 Z" fill="#f6f4ef" ${SW}/>
-    <path d="M430 462 L612 462 L612 476 L430 476 Z" fill="#3d4148" ${SW}/>
+    <path d="M430 462 L612 462 L612 476 L430 476 Z" fill="#3d4148" ${SW}/>${WINTER ? snowCap('M434 460 L608 460', 12) : ''}
     <g class="garage-door-wrap"><rect x="462" y="506" width="116" height="104" fill="#5d5f63" ${SW2}/>
       <g class="bike" transform="translate(520 586) scale(.9)"><circle cx="-24" cy="0" r="16" fill="none" stroke="#333" stroke-width="5"/><circle cx="24" cy="0" r="16" fill="none" stroke="#333" stroke-width="5"/><path d="M-24 0 L-4 -24 L18 -24 L24 0 M-4 -24 L-10 -34 M18 -24 L16 -36 L26 -38" stroke="#ff6f91" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M-16 -36 h12" stroke="#333" stroke-width="5" stroke-linecap="round"/></g>
       <g class="garage-door"><rect x="462" y="506" width="116" height="104" fill="#d9d6d0" ${SW2}/>${[0, 1, 2, 3, 4].map((i) => `<path d="M466 ${524 + i * 18} H574" stroke="#b7b3ab" stroke-width="3"/>`).join('')}<rect x="504" y="596" width="32" height="5" rx="2" fill="#8d8a84"/></g></g>
@@ -219,6 +272,7 @@ export function sirchHouseScene() {
       <rect x="-80" y="-48" width="8" height="48" fill="#a96a42"/><rect x="-80" y="-22" width="28" height="7" fill="#c98b55"/><rect x="72" y="-48" width="8" height="48" fill="#a96a42"/><rect x="52" y="-22" width="28" height="7" fill="#c98b55"/>
       <g ${SW2}><rect x="-40" y="-56" width="18" height="13" rx="3" fill="#ff9fb2"/><rect x="-18" y="-58" width="18" height="13" rx="3" fill="#ff9fb2"/><rect x="4" y="-56" width="18" height="13" rx="3" fill="#fff"/><rect x="26" y="-58" width="18" height="13" rx="3" fill="#ff9fb2"/></g></g>
     <g transform="translate(${tx(305)} ${ty(305, 30)})"><path d="M-14 0 L-18 -26 H18 L14 0 Z" fill="#d9744a" ${SW2}/><circle cx="-8" cy="-40" r="14" fill="#5fb84a" ${SW2}/><circle cx="8" cy="-46" r="14" fill="#6cc24a" ${SW2}/><circle cx="0" cy="-58" r="12" fill="#7fd05a" ${SW2}/></g>
+    ${WINTER ? (() => { let l = ''; const a = [tx(20) + 21, ty(20, 62) - 184], b = [tx(335) + 21, ty(335, 62) - 184]; for (let i = 0; i <= 16; i++) { const t = i / 16; const x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t + Math.sin(t * Math.PI * 8) * 6 + 8; l += `<circle class="twinkle" cx="${x}" cy="${y}" r="6" fill="${['#ff4d4d', '#ffd23f', '#4fa3ff', '#8fdc6a'][i % 4]}" style="animation-delay:${(i % 5) * 0.25}s"/>`; } return `<path d="M${a} Q${(a[0] + b[0]) / 2} ${(a[1] + b[1]) / 2 + 20} ${b}" stroke="#3a3d44" stroke-width="2" fill="none"/>` + l; })() : ''}
     <g id="terrace-people"></g>
     ${gameBadge(tx(210), ty(210, 40) - 110, '🃏')}
   </g>`;
@@ -241,12 +295,15 @@ export function sirchHouseScene() {
     for (let i = 0; i < Math.floor(w / 24); i++) f += flower(x + 16 + i * 24, y + 4 - (i % 2) * 6, cols[i % cols.length]);
     return `<g class="hot flowerbed" data-hot="flowers"><rect x="${x}" y="${y}" width="${w}" height="30" rx="6" fill="#7a4a2c" ${SW2}/><rect x="${x}" y="${y + 18}" width="${w}" height="14" rx="4" fill="#b85a3c" ${SW2}/>${f}</g>`;
   };
-  s += bed(470, 770, 150, ['#ff5a6e', '#ffd23f', '#ffffff']) + bed(880, 800, 170, ['#c78bff', '#ff8fc8', '#ff5a6e']) + bed(1000, 690, 120, ['#ffd23f', '#ff9f1c']);
+  if (WINTER) s += xmasTree(1066, 744, 0.85) + adventBoard(930, 830) + snowman(380, 880);
+  else s += bed(880, 800, 170, ['#c78bff', '#ff8fc8', '#ff5a6e']) + bed(1000, 690, 120, ['#ffd23f', '#ff9f1c']);
+  s += bed(470, 770, 150, WINTER ? ['#ff4d4d', '#ffffff', '#ff4d4d'] : ['#ff5a6e', '#ffd23f', '#ffffff']);
+  if (opt.birthday) s += balloons(1262, 600, 0.95) + balloons(440, 700, 0.9) + balloons(720, 420, 0.8);
 
   // Teich
   s += `<g class="hot" data-hot="pond">
     <ellipse cx="1210" cy="712" rx="104" ry="44" fill="#b9b2a4" ${SW}/>
-    <ellipse cx="1210" cy="708" rx="86" ry="33" fill="url(#pond)"/>
+    <ellipse cx="1210" cy="708" rx="86" ry="33" fill="${WINTER ? '#d8f0ff' : 'url(#pond)'}"/>
     <ellipse class="ripple" cx="1190" cy="708" rx="20" ry="7" fill="none" stroke="#fff" stroke-width="3" opacity="0"/>
     <path d="M1170 700 q20 -8 40 0" stroke="#fff" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
     <ellipse cx="1246" cy="714" rx="16" ry="7" fill="#5fb84a"/><path d="M1246 714 l14 -4" stroke="#3fa8d6" stroke-width="3"/>
@@ -263,7 +320,7 @@ export function sirchHouseScene() {
   // Schuppen
   s += `<g transform="translate(1290 690)"><g class="hot" data-hot="shed">
     <path d="M0 140 L150 140 L150 30 L0 30 Z" fill="#e9e2d2" ${SW}/>${[1, 2, 3, 4, 5, 6].map((i) => `<path d="M${i * 21} 32 V138" stroke="#cfc6b2" stroke-width="2.5"/>`).join('')}
-    <path d="M-12 36 L162 36 L150 0 L0 0 Z" fill="#5d6168" ${SW}/>
+    <path d="M-12 36 L162 36 L150 0 L0 0 Z" fill="#5d6168" ${SW}/>${WINTER ? snowCap('M2 0 L148 0', 12) : ''}
     <rect x="22" y="56" width="58" height="84" fill="#7a6a58" ${SW2}/><g class="shed-door"><rect x="22" y="56" width="58" height="84" fill="#d6ccb6" ${SW2}/><path d="M26 60 L76 136 M76 60 L26 136" stroke="#b9ad94" stroke-width="3"/><circle cx="70" cy="98" r="3.5" fill="#6b5a48"/></g>
     <circle cx="118" cy="66" r="11" fill="#fff6c9" stroke="#8a8a8a" stroke-width="3" class="lamp"/>
   </g></g>`;

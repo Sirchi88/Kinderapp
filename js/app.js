@@ -20,6 +20,10 @@ import './games/puzzle.js';
 import './games/search.js';
 import './games/sorting.js';
 import './games/wardrobe.js';
+import './games/farm.js';
+import './games/build.js';
+import './games/bike.js';
+import './screens/visit.js';
 
 // Sprechblase zeigt, was gerade gesagt wird – mit dem Kuscheltier des Kindes
 onSay((text) => showBubble(text, session.kid?.plush || 'baer'));

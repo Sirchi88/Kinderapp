@@ -118,6 +118,7 @@ export const sfx = {
   squawk() { if (!ctx) return; const t = ctx.currentTime; tone(900, t, 0.18, { type: 'sawtooth', gain: 0.1, slideTo: 1400, filter: 2500 }); tone(1300, t + 0.2, 0.2, { type: 'sawtooth', gain: 0.08, slideTo: 800, filter: 2500 }); },
   trumpet() { if (!ctx) return; const t = ctx.currentTime; tone(300, t, 0.7, { type: 'sawtooth', gain: 0.12, slideTo: 520, filter: 1600 }); },
   roar() { if (!ctx) return; const t = ctx.currentTime; noise(t, 0.8, { gain: 0.25, type: 'lowpass', freq: 500 }); tone(110, t, 0.8, { type: 'sawtooth', gain: 0.1, slideTo: 70, filter: 400 }); },
+  neigh() { if (!ctx) return; const t = ctx.currentTime; for (let i = 0; i < 5; i++) tone(900 - i * 60, t + i * 0.08, 0.1, { type: 'sawtooth', gain: 0.07, slideTo: 1100 - i * 80, filter: 2200 }); },
   tick() { if (!ctx) return; tone(1200, ctx.currentTime, 0.04, { type: 'sine', gain: 0.08 }); },
   wrong() { if (!ctx) return; const t = ctx.currentTime; tone(330, t, 0.18, { gain: 0.12 }); tone(262, t + 0.16, 0.3, { gain: 0.12 }); },
 };
@@ -161,6 +162,16 @@ const SONGS = {
       ['G5', 0.5], ['A5', 0.5], ['B5', 0.5], ['D6', 0.5], ['C6', 2],
     ],
   },
+  weihnacht: {
+    bpm: 100, swing: 0.06, inst: 'bell',
+    chords: ['C', 'F', 'C', 'G', 'C', 'F', 'G', 'C'],
+    melody: [
+      ['E5', 1], ['G5', 1], ['C6', 1.5], ['B5', 0.5], ['A5', 1], ['F5', 1], ['A5', 2],
+      ['G5', 1], ['E5', 1], ['C5', 1], ['E5', 1], ['D5', 3], [null, 1],
+      ['E5', 1], ['G5', 1], ['C6', 1.5], ['B5', 0.5], ['A5', 1], ['C6', 1], ['A5', 2],
+      ['G5', 1], ['B4', 1], ['D5', 1], ['F5', 1], ['C5', 3], [null, 1],
+    ],
+  },
   ruhe: {
     bpm: 70, swing: 0, inst: 'bell',
     chords: ['F', 'C', 'Dm', 'C', 'Bb', 'F', 'G', 'C'],
@@ -181,7 +192,7 @@ let current = null, timer = null;
 function playNote(inst, f, t, dur, vel = 1) {
   if (inst === 'pluck') { tone(f, t, Math.min(dur, 0.9), { type: 'triangle', gain: 0.11 * vel, attack: 0.004 }); tone(hz(f) * 2, t, 0.25, { type: 'sine', gain: 0.03 * vel }); }
   else if (inst === 'bright') { tone(f, t, Math.min(dur, 0.5), { type: 'square', gain: 0.05 * vel, filter: 2600 }); tone(f, t, 0.3, { type: 'triangle', gain: 0.07 * vel }); }
-  else { tone(f, t, 1.6, { type: 'sine', gain: 0.1 * vel }); tone(hz(f) * 3, t, 0.6, { type: 'sine', gain: 0.02 * vel }); }
+  else { tone(f, t, 1.6, { type: 'sine', gain: 0.1 * vel }); tone(hz(f) * 3, t, 0.6, { type: 'sine', gain: 0.025 * vel }); tone(hz(f) * 4.2, t, 0.3, { type: 'sine', gain: 0.015 * vel }); }
 }
 
 function scheduleSong(song, startAt) {
@@ -253,3 +264,19 @@ export function stopMusic(fade = true) {
 }
 
 export const musicPlaying = () => current;
+
+/** Einmalige Melodie (z. B. Geburtstagslied). notes: [[Note, Schläge], …] */
+export function playMelody(notes, bpm = 100, inst = 'xylo') {
+  if (!ctx) return 0;
+  const beat = 60 / bpm;
+  let t = ctx.currentTime + 0.1;
+  for (const [n, len] of notes) {
+    if (n) { tone(n, t, Math.min(1.2, len * beat * 1.2), { type: inst === 'xylo' ? 'sine' : 'triangle', gain: 0.2 }); tone(hz(n) * 2, t, 0.25, { type: 'sine', gain: 0.04 }); }
+    t += len * beat;
+  }
+  return (t - ctx.currentTime) * 1000;
+}
+
+// Traditionelles Geburtstagslied (gemeinfrei)
+export const BIRTHDAY_SONG = [['G4', 0.75], ['G4', 0.25], ['A4', 1], ['G4', 1], ['C5', 1], ['B4', 2], ['G4', 0.75], ['G4', 0.25], ['A4', 1], ['G4', 1], ['D5', 1], ['C5', 2],
+  ['G4', 0.75], ['G4', 0.25], ['G5', 1], ['E5', 1], ['C5', 1], ['B4', 1], ['A4', 2], ['F5', 0.75], ['F5', 0.25], ['E5', 1], ['C5', 1], ['D5', 1], ['C5', 3]];

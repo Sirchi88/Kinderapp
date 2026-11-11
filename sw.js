@@ -1,6 +1,6 @@
 // Offline-Speicher: Die App funktioniert nach dem ersten Öffnen auch ohne Internet.
 // Bei jeder neuen Version VERSION erhöhen.
-const VERSION = 'sirchhausen-v3';
+const VERSION = 'sirchhausen-v4';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/store.js', 'js/nav.js', 'js/ui.js', 'js/audio.js', 'js/speech.js', 'js/motion.js', 'js/pin.js', 'js/breaks.js', 'js/activities.js',
@@ -8,6 +8,7 @@ const FILES = [
   'js/media.js', 'js/pet.js', 'js/art/coloring.js',
   'js/games/shell.js', 'js/games/tamagotchi.js', 'js/games/memory.js', 'js/games/paint.js', 'js/games/teeth.js', 'js/games/music.js', 'js/screens/house.js',
   'js/games/drag.js', 'js/games/baking.js', 'js/games/puzzle.js', 'js/games/search.js', 'js/games/sorting.js', 'js/games/wardrobe.js',
+  'js/season.js', 'js/games/farm.js', 'js/games/build.js', 'js/games/bike.js', 'js/screens/visit.js', 'js/screens/festive.js',
   'js/screens/profiles.js', 'js/screens/editor.js', 'js/screens/plushpick.js', 'js/screens/village.js', 'js/screens/parents.js', 'js/screens/starjar.js',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
 ];

@@ -46,6 +46,7 @@ const VIEWS = {
           <div class="field"><label>Figur & Kuscheltier neu aussuchen <small>Beim nächsten Start wird neu gestaltet</small></label><button class="pbtn" data-act="redo" data-i="${i}">Neu gestalten</button></div>
         </div>`;
       }).join('') +
+      `<div class="box"><h3>🎄 Weihnachten</h3><div class="field"><label>Weihnachtsmodus <small>Schnee, Lichterkette, Christbaum, Weihnachtsmusik und Adventskalender im Dorf. „Automatisch“ = 1. bis 26. Dezember.</small></label>${seg('settings.xmas', [['auto', 'Automatisch'], ['on', 'Immer an'], ['off', 'Aus']])}</div></div>` +
       `<div class="box"><h3>🧸 Tamagotchi</h3><div class="field"><label>Kuscheltier darf traurig werden <small>Wenn es lange nicht gefüttert, gebadet oder geknuddelt wurde. Es wird nie krank.</small></label>${toggle('settings.petSad')}</div></div>`;
   },
 

@@ -5,7 +5,9 @@ Läuft als Web-App auf iPhone und iPad (Querformat), auch offline.
 
 Das ganze Konzept steht in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 
-## Stand: Etappe 1 – Fundament
+## ✅ Fertig – alle 4 Etappen
+
+## Etappe 1 – Fundament
 - **Wer spielt heute?** Kinder-Auswahl für Malia & Nele
 - **Figuren-Editor** mit Spiegel: Haut, Frisur, Haarfarbe, Augen, Oberteil, Hose/Rock, Schuhe, Schmuck & Extras (Krone, Feenflügel, Schleife …)
 - **19 Kuscheltiere**, u. a. Tukan, Bär, Wildschwein, Affe, Pavian, Rassel, Gelbi, Puppi, Einhorn, Allgäuer Kuh
@@ -33,6 +35,14 @@ Das ganze Konzept steht in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 - **Suchbilder „Wo ist Bailey?“** (Zypressen im Garten): Bailey und versteckte Dinge im Dorf oder im Haus finden, mit Tipp-Lupe
 - **Sortieren & Zählen** (Spielzimmer): Zählen mit Mitzählen, Farben in Körbe sortieren, Größen vergleichen, Formen einstecken
 - **Kleiderschrank** (Ankleide): Alle Familienmitglieder anziehen, Kostüme (Dirndl, Tracht mit Lederhose, Prinzessin, Fee, Pirat, Feuerwehr, Schlafanzug), Foto-Knopf, und das **Wetter-Spiel** (Sonne, Regen, Schnee – richtig anziehen!)
+
+## Etappe 4 – Dorfleben & Feste
+- **Bauernhof-Manager** (rote Scheune auf dem Hügel): Tiere füttern, tränken und streicheln, Schweinchen schrubben, Kuh melken, Eier sammeln (mit Mitzählen), Karotten ernten
+- **Klötzchen-Bauen** in Opa Mindelheims Bau-Schuppen: frei bauen oder nach Bauplan (Haus, Turm, Auto, Brücke, Burg), bei „schwer“ auch mit den richtigen Farben
+- **Fahrradtour** (Garage): durchs Allgäu zu Oma & Opa radeln, Sterne sammeln, über Steine springen, Kühe mit der Glocke wegklingeln
+- **Besuch bei den Großeltern**: Kuchen essen, Kuckucksuhr, Radio zum Tanzen, das zuletzt gemalte Bild hängt an der Wand, Opa Mindelheims Werkzeugkiste führt zur Baustelle
+- **Weihnachtsmodus** (automatisch 1.–26. Dezember, im Elternbereich auch „immer an“): Schnee, Lichterkette, Christbaum, Schneemann, Weihnachtsmusik und **Adventskalender** mit 24 Überraschungen
+- **Geburtstag**: Luftballons im Dorf, die ganze Familie feiert, Geburtstagslied, Kerzen auspusten, Geschenk mit 10 Sternen und Partyhut für das Kuscheltier
 
 ## Lokal starten
 ```bash

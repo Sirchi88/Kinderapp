@@ -7,6 +7,8 @@ import { personSVG, FAMILY } from '../art/person.js';
 import { plushSVG, PLUSH } from '../art/plush.js';
 import { baileySVG } from '../art/bailey.js';
 import { kidPlush, petMood, lowestNeed } from '../pet.js';
+import { isChristmas, isBirthday } from '../season.js';
+import { openAdvent, birthdayParty } from './festive.js';
 import { say } from '../speech.js';
 import { sfx, playMusic, unlockAudio } from '../audio.js';
 import { askPin } from '../pin.js';
@@ -22,9 +24,11 @@ register('village', (app, params) => {
   session.paused = false;
   const name = kid.name;
   const pname = kid.plushName || PLUSH[kid.plush]?.name || '';
+  const xmas = isChristmas(), bday = isBirthday(kid);
+  const song = xmas ? 'weihnacht' : 'dorf';
 
   const el = h(`<div class="screen village" style="--kid:${kid.color}">
-    <svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${sirchHouseScene()}</svg>
+    <svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${sirchHouseScene({ xmas, birthday: bday })}</svg>${xmas ? `<div class="snowfall">${Array.from({ length: 40 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-duration:${5 + (i % 5)}s;animation-delay:${-(i * 0.7) % 8}s;width:${6 + (i % 3) * 3}px;height:${6 + (i % 3) * 3}px"></i>`).join('')}</div>` : ''}
     <div class="hud">
       <button class="kid-badge" style="--kid:${kid.color};color:${kidColorDark(kid.color)}" aria-label="Kind wechseln"><span class="face">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</span>${esc(name)}</button>
       <button class="star-badge" aria-label="Sterne">${ICON.star}<span>${kid.stars}</span></button>
@@ -125,8 +129,8 @@ register('village', (app, params) => {
     omaAuerbach() { sfx.pop(); greetFamily('gp-ma', pick([`Grüß di, ${name}! Magst du ein Stück Kuchen?`, `Hallo mein Schatz! Komm, ich drück dich!`])); },
     omaMindelheim() { sfx.pop(); greetFamily('gp-mm', pick([`Servus ${name}! Du bist aber schick heute!`, `Hallo Schätzchen! Kommst du mich besuchen?`])); },
     opaMindelheim() { sfx.pop(); greetFamily('gp-om', pick([`Grüß di, ${name}! Ich bau gerade was ganz Tolles!`, `Servus! Hilfst du mir auf der Baustelle?`])); },
-    auerbach() { sfx.door(); greetFamily(pick(['gp-oa', 'gp-ma']), `Hier wohnen Oma und Opa Auerbach!`); },
-    mindelheim() { sfx.door(); greetFamily(pick(['gp-mm', 'gp-om']), `Hier wohnen Oma und Opa Mindelheim!`); },
+    auerbach() { sfx.door(); go('visit', { who: 'auerbach' }); },
+    mindelheim() { sfx.door(); go('visit', { who: 'mindelheim' }); },
     bailey(g, p) {
       sfx.purr(); setTimeout(() => sfx.meow(), 900);
       svgFloat(fx, cat.x, cat.y - 90, '❤️', 3);
@@ -147,9 +151,13 @@ register('village', (app, params) => {
     garage(g) {
       const d = g.querySelector('.garage-door'); const open = !d.classList.contains('open');
       d.classList.toggle('open', open); sfx.door();
-      if (open) say('Da ist dein Fahrrad! Bald machen wir eine Fahrradtour durchs Dorf.');
+      if (open) { say('Dein Fahrrad! Los geht die Radtour!'); setTimeout(() => go('bike', {}), 1300); }
     },
-    shed(g) { const d = g.querySelector('.shed-door'); d.classList.toggle('open'); sfx.door(); if (d.classList.contains('open')) say('Im Schuppen wohnen die Gartensachen. Bald gibt es hier was zu entdecken!'); },
+    shed(g) { const d = g.querySelector('.shed-door'); d.classList.add('open'); sfx.door(); say('Opas Bau-Schuppen! Hier wird gebaut!'); setTimeout(() => go('build', {}), 900); },
+    farm() { sfx.moo(); go('farm', {}); },
+    advent() { sfx.bell(); openAdvent(kid); },
+    birthday() { birthdayParty(kid, kid.birthdayDone !== String(new Date().getFullYear())); },
+    snowman(g) { sfx.giggle(); say(pick(['Brrr! Ich bin der Schneemann Schnuppi!', 'Hallo! Mir ist gar nicht kalt!', 'Meine Nase ist eine Karotte! Hihi!'])); },
     house() { sfx.door(); go('house', {}); },
     terrace() { sfx.pop(); go('memory', {}); },
     easel() { sfx.pop(); go('paint', {}); },
@@ -163,7 +171,7 @@ register('village', (app, params) => {
     const p = toWorld(e);
     const act = ACTIONS[g.dataset.hot];
     if (!act) return;
-    if (!['plush', 'kid', 'bailey', 'house', 'terrace', 'easel', 'search'].includes(g.dataset.hot)) wiggle(g);
+    if (!['plush', 'kid', 'bailey', 'house', 'terrace', 'easel', 'search', 'farm', 'advent', 'birthday', 'snowman', 'auerbach', 'mindelheim'].includes(g.dataset.hot)) wiggle(g);
     act(g, p);
   });
 
@@ -179,14 +187,16 @@ register('village', (app, params) => {
     b.querySelector('span').textContent = kid.stars;
     b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
   };
-  const onResume = () => { onStars(); session.paused = false; playMusic('dorf'); };
+  const onResume = () => { onStars(); session.paused = false; playMusic(song); };
   document.addEventListener('stars', onStars);
   document.addEventListener('playresume', onResume);
 
-  playMusic('dorf');
-  if (params.greet) {
+  playMusic(song);
+  if (params.greet && bday && kid.birthdayDone !== String(new Date().getFullYear())) setTimeout(() => birthdayParty(kid, true), 600);
+  else if (params.greet) {
     setTimeout(() => {
       if (params.newPlush) say(`Juhu! ${pname} wohnt jetzt bei dir, ${name}! Willkommen in Sirchhausen!`);
+      else if (xmas) say(pick([`Servus ${name}! Es hat geschneit! Schau mal in den Adventskalender!`, `Hallo ${name}! Bald ist Weihnachten! Der Adventskalender wartet!`]));
       else say(pick([`Servus ${name}! Willkommen in Sirchhausen!`, `Grüß di, ${name}! Schön, dass du da bist!`, `Hallo ${name}! ${pname} hat dich schon vermisst!`]));
     }, 400);
   }

@@ -21,6 +21,11 @@ function defaultKid(id, name, color) {
     pet: null,             // Bedürfnisse des Kuscheltiers (Tamagotchi)
     plushOutfit: {},       // Kleidung des Kuscheltiers
     lastPetStar: '',
+    advent: { opened: {}, last: '' },
+    birthdayDone: '',      // Jahr, in dem die Geburtstags-Überraschung schon kam
+    farm: { eggs: 0, veg: 0, milk: 0 },
+    builds: 0,
+    lastVisit: {},
   };
 }
 
@@ -40,6 +45,7 @@ const DEFAULTS = {
     voiceRate: 0.95,
     motionCheck: true,
     petSad: true,               // Kuscheltier darf traurig werden
+    xmas: 'auto',               // Weihnachtsmodus: 'auto' (1.–26. Dez.), 'on', 'off'
   },
   rewards: [
     { id: 'r1', emoji: '🍦', name: 'Eis essen mit Papa', cost: 20 },
