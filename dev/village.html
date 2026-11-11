@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0}svg.v{width:100vw;height:100vh;display:block}</style></head><body>
+<svg class="v" id="v" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"></svg>
+<script type="module">
+import {sirchHouseScene} from '../js/art/village.js';
+import {baileySVG} from '../js/art/bailey.js';
+import {personSVG,FAMILY,defaultKidAvatar} from '../js/art/person.js';
+import {plushSVG} from '../js/art/plush.js';
+const v=document.getElementById('v');v.innerHTML=sirchHouseScene();
+const nest=(x,y,w,h,inner)=>`<svg x="${x}" y="${y}" width="${w}" height="${h}" overflow="visible">${inner.replace('<svg','<svg width="100%" height="100%"')}</svg>`;
+document.getElementById('bailey-layer').innerHTML=nest(820,700,120,92,baileySVG('walk'))+nest(980,560,90,50,baileySVG('sleep'));
+document.getElementById('terrace-people').innerHTML=nest(860,410,150,219,personSVG(FAMILY.papa))+nest(950,400,150,219,personSVG(FAMILY.mama));
+document.getElementById('kid-layer').innerHTML=nest(560,590,150,219,personSVG({...defaultKidAvatar(0),scale:.72}))+nest(660,700,100,105,plushSVG('tukan'));
+document.getElementById('gp-auerbach').innerHTML=nest(330,400,80,117,personSVG(FAMILY.opaAuerbach))+nest(380,400,80,117,personSVG(FAMILY.omaAuerbach));
+</script></body></html>
