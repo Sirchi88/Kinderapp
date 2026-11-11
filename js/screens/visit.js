@@ -1,5 +1,5 @@
 // Besuch bei Oma & Opa Auerbach oder Oma & Opa Mindelheim.
-import { register, go, session } from '../nav.js';
+import { register, go, goBack, session } from '../nav.js';
 import { save, addStars, localDay } from '../store.js';
 import { h, ICON, onTap, svgFloat, starRain, overlay } from '../ui.js';
 import { personSVG, FAMILY } from '../art/person.js';
@@ -75,7 +75,7 @@ register('visit', (app, params) => {
     world.querySelector('[data-hot=photo]').dataset.src = img || '';
     world.querySelector('[data-hot=photo]').dataset.mine = mine ? '1' : '';
   });
-  onTap(el.querySelector('.g-back'), () => go('village', {}));
+  onTap(el.querySelector('.g-back'), () => goBack('village'));
   world.addEventListener('click', (e) => {
     unlockAudio();
     const g = e.target.closest('[data-hot]');

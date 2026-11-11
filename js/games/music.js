@@ -21,6 +21,7 @@ const SONGS = [
 ];
 
 const drumSVG = (body, top, ring) => `<svg viewBox="0 0 120 110"><ellipse cx="60" cy="88" rx="52" ry="14" fill="#000" opacity=".12"/><path d="M10 34 V78 Q60 102 110 78 V34" fill="${body}" stroke="#5a3e2b" stroke-width="4"/><path d="M10 50 Q60 74 110 50 M10 64 Q60 88 110 64" stroke="${ring}" stroke-width="4" fill="none"/><ellipse cx="60" cy="34" rx="50" ry="18" fill="${top}" stroke="#5a3e2b" stroke-width="4"/></svg>`;
+const INSTRNAME = { kick: 'Große Trommel', snare: 'Kleine Trommel', tom1: 'Trommel', tom2: 'Tiefe Trommel', cymbal: 'Becken', cowbell: 'Kuhglocke', shaker: 'Rassel' };
 const INSTR = [
   { id: 'kick', snd: () => sfx.kick(), svg: drumSVG('#ff6f6f', '#fff6e8', '#ffd23f'), big: true },
   { id: 'snare', snd: () => sfx.snare(), svg: drumSVG('#4fa3ff', '#fff6e8', '#fff') },
@@ -40,7 +41,7 @@ register('music', (app) => {
   const kid = session.kid;
   const { el, body, right } = gameShell(app, { cls: 'music', back: 'house', music: null });
   stopMusic();
-  right.innerHTML = `<div class="mtabs">${[['xylo', '🎹'], ['drums', '🥁'], ['animals', '🐮'], ['songs', '🎶'], ['dance', '💃']].map(([k, i]) => `<button class="mtab" data-m="${k}">${i}</button>`).join('')}</div>`;
+  right.innerHTML = `<div class="mtabs">${[['xylo', '🎹', 'Xylophon'], ['drums', '🥁', 'Schlagzeug'], ['animals', '🐮', 'Tierorchester'], ['songs', '🎶', 'Lieder lernen'], ['dance', '💃', 'Tanz-Party']].map(([k, i, n]) => `<button class="mtab" data-m="${k}" aria-label="${n}">${i}</button>`).join('')}</div>`;
   let cleanupMode = null;
 
   const xyloHTML = () => `<div class="xylo">${BARS.map(([n, c], i) => `<button class="bar" data-n="${n}" data-i="${i}" style="--c:${c};--h:${100 - i * 6}%"><i></i><i></i></button>`).join('')}</div>`;
@@ -70,7 +71,7 @@ register('music', (app) => {
       say('Das Xylophon! Tipp auf die bunten Stäbe oder wisch drüber!');
     },
     drums() {
-      body.innerHTML = `<div class="stage drums">${INSTR.map((d) => `<button class="drum ${d.big ? 'big' : ''}" data-d="${d.id}">${d.svg}</button>`).join('')}</div>`;
+      body.innerHTML = `<div class="stage drums">${INSTR.map((d) => `<button class="drum ${d.big ? 'big' : ''}" data-d="${d.id}" aria-label="${INSTRNAME[d.id]}">${d.svg}</button>`).join('')}</div>`;
       body.querySelectorAll('.drum').forEach((b) => b.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         INSTR.find((d) => d.id === b.dataset.d).snd();
@@ -89,7 +90,7 @@ register('music', (app) => {
       say('Das Tierorchester! Welches Tier macht welches Geräusch?');
     },
     songs() {
-      body.innerHTML = `<div class="stage songs">${SONGS.map((s, i) => `<button class="song" data-s="${i}"><span>${s.icon}</span></button>`).join('')}</div>`;
+      body.innerHTML = `<div class="stage songs">${SONGS.map((s, i) => `<button class="song" data-s="${i}" aria-label="${s.name}"><span>${s.icon}</span></button>`).join('')}</div>`;
       say('Welches Lied möchtest du lernen?');
       body.querySelectorAll('.song').forEach((b) => onTap(b, async () => {
         const song = SONGS[+b.dataset.s];

@@ -5,6 +5,7 @@ import { unlockAudio } from './audio.js';
 import { onSay } from './speech.js';
 import { showBubble } from './ui.js';
 import { startTimekeeper } from './breaks.js';
+import { layoutStage } from './viewport.js';
 import './screens/profiles.js';
 import './screens/editor.js';
 import './screens/plushpick.js';
@@ -24,6 +25,8 @@ import './games/farm.js';
 import './games/build.js';
 import './games/bike.js';
 import './screens/visit.js';
+import './screens/games.js';
+import { say } from './speech.js';
 
 // Sprechblase zeigt, was gerade gesagt wird – mit dem Kuscheltier des Kindes
 onSay((text) => showBubble(text, session.kid?.plush || 'baer'));
@@ -32,10 +35,24 @@ onSay((text) => showBubble(text, session.kid?.plush || 'baer'));
 const unlock = () => { unlockAudio(); window.__audioUnlocked = true; };
 window.addEventListener('pointerdown', unlock, { capture: true });
 
+// Jeder Tastendruck wird vorgelesen (Kinder können noch nicht lesen).
+// Das Spiel selbst darf danach sprechen – das ersetzt dann die Beschriftung.
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button, [data-say]');
+  if (!b || b.closest('.parents, .pin, .ask')) return;
+  let t = b.dataset.say || b.getAttribute('aria-label') || '';
+  if (!t) {
+    const txt = b.textContent.replace(/[^\p{L}\p{N}\s+&?!.,-]/gu, '').trim();
+    if (txt && !/^\d+$/.test(txt)) t = txt;
+  }
+  if (t) say(t);
+}, { capture: true });
+
 // Doppeltipp-Zoom und Gesten auf iOS verhindern
 document.addEventListener('gesturestart', (e) => e.preventDefault());
 document.addEventListener('dblclick', (e) => e.preventDefault());
 
+layoutStage();
 startTimekeeper();
 go('profiles');
 

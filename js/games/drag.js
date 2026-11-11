@@ -1,4 +1,5 @@
 // Ziehen & Ablegen mit dem Finger (für Puzzle, Sortieren …)
+import { scale } from '../viewport.js';
 export function draggable(el, { onStart, onMove, onDrop } = {}) {
   let sx = 0, sy = 0, ox = 0, oy = 0, active = false;
   el.style.touchAction = 'none';
@@ -14,13 +15,18 @@ export function draggable(el, { onStart, onMove, onDrop } = {}) {
   });
   el.addEventListener('pointermove', (e) => {
     if (!active) return;
-    el.style.left = ox + e.clientX - sx + 'px';
-    el.style.top = oy + e.clientY - sy + 'px';
+    el.style.left = ox + (e.clientX - sx) / scale() + 'px';
+    el.style.top = oy + (e.clientY - sy) / scale() + 'px';
     onMove?.(el, e);
   });
   const end = (e) => {
     if (!active) return;
     active = false;
+    // Letzte Fingerposition sicher übernehmen
+    if (e.type === 'pointerup') {
+      el.style.left = ox + (e.clientX - sx) / scale() + 'px';
+      el.style.top = oy + (e.clientY - sy) / scale() + 'px';
+    }
     el.classList.remove('dragging');
     onDrop?.(el, e, { back: () => { el.classList.add('return'); el.style.left = ox + 'px'; el.style.top = oy + 'px'; setTimeout(() => el.classList.remove('return'), 350); } });
   };

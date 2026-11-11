@@ -89,7 +89,7 @@ register('search', (app, params) => {
         levelUp(kid, 'search', diff, 8);
         await sleep(900);
         const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: 'Alles gefunden!', speak: `Du hast alles gefunden! Du bist ein richtiger Detektiv!` });
-        if (r === 'again') play(); else (await import('../nav.js')).go(params.back || 'village', {});
+        if (r === 'again') play(); else (await import('../nav.js')).goBack(params.back || 'village');
       }
     });
     onTap(right.querySelector('[data-a=hint]'), () => {

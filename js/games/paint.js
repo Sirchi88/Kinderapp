@@ -1,10 +1,11 @@
 // Malen & Ausmalen: Pinsel, Regenbogen-Pinsel, Farbeimer, Stempel, Radierer. Bilder kommen in die Galerie.
 import { register, session } from '../nav.js';
-import { h, onTap, ICON, esc } from '../ui.js';
+import { h, onTap, ICON, esc, colorName } from '../ui.js';
 import { gameShell, winScreen, startRound } from './shell.js';
 import { TEMPLATES, templateSVG } from '../art/coloring.js';
 import { listDrawings, addDrawing } from '../media.js';
 import { say } from '../speech.js';
+import { stageW, stageH } from '../viewport.js';
 import { sfx } from '../audio.js';
 
 const COLORS = ['#ff4d4d', '#ff9f1c', '#ffd23f', '#8fdc4a', '#2fb36b', '#4fc3f7', '#2f6fdf', '#9b5de5', '#ff8fc8', '#8a5530', '#f1c09a', '#2f3238', '#9aa0a8', '#ffffff'];
@@ -21,8 +22,8 @@ register('paint', (app) => {
     const drawings = (await listDrawings()).filter((d) => d.kid === kid.id).slice(-8).reverse();
     body.innerHTML = `<div class="paint-pick">
       <div class="tpl-grid">
-        <button class="tpl" data-t=""><div class="blank">✏️</div></button>
-        ${Object.keys(TEMPLATES).map((k) => `<button class="tpl" data-t="${k}">${templateSVG(k, 'thumb')}</button>`).join('')}
+        <button class="tpl" data-t="" data-say="Freies Malen"><div class="blank">✏️</div></button>
+        ${Object.keys(TEMPLATES).map((k) => `<button class="tpl" data-t="${k}" data-say="${TEMPLATES[k].name}">${templateSVG(k, 'thumb')}</button>`).join('')}
       </div>
       ${drawings.length ? `<div class="gallery"><span>🖼️</span>${drawings.map((d) => `<img src="${d.data}" alt="">`).join('')}</div>` : ''}
     </div>`;
@@ -49,7 +50,7 @@ register('paint', (app) => {
         <canvas width="1600" height="1200"></canvas>
         ${tpl ? templateSVG(tpl, 'outline-layer') : ''}
       </div>
-      <div class="palette">${COLORS.map((c) => `<button class="col ${c === color ? 'on' : ''}" data-c="${c}" style="--c:${c}"></button>`).join('')}</div>
+      <div class="palette">${COLORS.map((c) => `<button class="col ${c === color ? 'on' : ''}" data-c="${c}" data-say="${colorName(c)}" style="--c:${c}"></button>`).join('')}</div>
       <div class="stamps">${STAMPS.map((s) => `<button class="stp ${s === stamp ? 'on' : ''}" data-st="${s}">${s}</button>`).join('')}</div>
     </div>`;
     right.innerHTML = `<button class="btn round ghost" data-a="new" aria-label="Neues Bild">📄</button><button class="btn round go" data-a="done" aria-label="Fertig">${ICON.check}</button>`;
@@ -61,8 +62,7 @@ register('paint', (app) => {
     ctx.scale(2, 2);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const fit = () => {
-      const small = innerHeight < 520;
-      const W = innerWidth - (small ? 220 : 300), H = innerHeight - (small ? 76 : 40);
+      const W = stageW() - 300, H = stageH() - 40;
       const w = Math.min(W, (H * 4) / 3);
       paper.style.width = w + 'px'; paper.style.height = (w * 3) / 4 + 'px';
     };

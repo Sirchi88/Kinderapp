@@ -1,7 +1,7 @@
 // Klötzchen-Bauen in Opas Bau-Schuppen: frei bauen oder nach Bauplan.
 import { register, session } from '../nav.js';
 import { save } from '../store.js';
-import { h, onTap, holdButton, ICON } from '../ui.js';
+import { h, onTap, holdButton, ICON, colorName } from '../ui.js';
 import { gameShell, chooseLevel, getLevel, levelUp, winScreen, startRound, pick } from './shell.js';
 import { personSVG, FAMILY } from '../art/person.js';
 import { say } from '../speech.js';
@@ -44,7 +44,7 @@ register('build', (app) => {
   function start() {
     right.innerHTML = '';
     body.innerHTML = `<div class="bd-start"><div class="opa">${personSVG(FAMILY.opaMindelheim, { pose: 'wave', mood: 'laugh' })}</div>
-      <div class="bd-modes"><button class="bd-mode" data-m="free">🧱</button>${PLANS.map((p, i) => `<button class="bd-mode" data-p="${i}">${p.icon}</button>`).join('')}</div></div>`;
+      <div class="bd-modes"><button class="bd-mode" data-m="free" aria-label="Frei bauen">🧱</button>${PLANS.map((p, i) => `<button class="bd-mode" data-p="${i}" aria-label="${p.name}">${p.icon}</button>`).join('')}</div></div>`;
     say('Servus! Ich bin Opa Mindelheim. Willst du frei bauen, oder nach Bauplan?');
     body.querySelector('[data-m=free]').addEventListener('click', () => { sfx.pop(); play(null, 'leicht'); });
     body.querySelectorAll('[data-p]').forEach((b) => onTap(b, async () => play(PLANS[+b.dataset.p], await chooseLevel(kid, 'build')), { sound: 'pop' }));
@@ -61,7 +61,7 @@ register('build', (app) => {
         <g class="ghost"></g><g class="placed"></g><g class="hover"></g></svg>
         ${plan ? `<div class="bd-plan ${diff}"><svg viewBox="-20 -60 ${COLS * U + 40} ${ROWS * U + 80}">${plan.blocks.map(([t, c, r, col]) => blockSVG(t, c * U, (ROWS - 1 - r) * U, col)).join('')}</svg></div>` : ''}
       </div>
-      <div class="bd-colors">${COLORS.map((c) => `<button class="bd-c ${c === color ? 'on' : ''}" data-c="${c}" style="--c:${c}"></button>`).join('')}</div>
+      <div class="bd-colors">${COLORS.map((c) => `<button class="bd-c ${c === color ? 'on' : ''}" data-c="${c}" data-say="${colorName(c)}" style="--c:${c}"></button>`).join('')}</div>
       <div class="bd-opa">${personSVG(FAMILY.opaMindelheim)}</div></div>`;
     right.innerHTML = `<button class="btn round ghost" data-a="undo" aria-label="Rückgängig">↶</button><button class="btn round ghost bd-trash" aria-label="Alles weg">🗑️</button>${plan ? '' : `<button class="btn round go" data-a="done" aria-label="Fertig">${ICON.check}</button>`}`;
     const svg = body.querySelector('.bd-grid'), pl = svg.querySelector('.placed'), gh = svg.querySelector('.ghost'), hov = svg.querySelector('.hover');

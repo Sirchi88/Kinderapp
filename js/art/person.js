@@ -357,9 +357,9 @@ export function personSVG(o, opt = {}) {
   const mood = opt.mood || 'happy';
   const build = o.build || 1;
   const sc = opt.ignoreScale ? 1 : o.scale || 1;
-  const vb = opt.crop === 'head' ? '18 8 164 176' : opt.crop === 'body' ? '30 136 140 150' : '0 0 200 292';
+  const vb = opt.crop === 'head' ? '18 8 164 176' : opt.crop === 'body' ? '30 136 140 150' : opt.crop === 'legs' ? '36 200 128 90' : '0 0 200 292';
   const bodyT = `translate(100 0) scale(${build} 1) translate(-100 0)`;
-  return `<svg class="person ${opt.cls || ''}" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+  return `<svg class="person ${opt.cls || ''}" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" overflow="${opt.crop ? 'hidden' : 'visible'}">
   <defs>${patternDefs(o, ids)}</defs>
   <g transform="translate(100 284) scale(${sc}) translate(-100 -284)">
     <ellipse cx="100" cy="282" rx="${46 * build}" ry="8" fill="#000" opacity=".12"/>

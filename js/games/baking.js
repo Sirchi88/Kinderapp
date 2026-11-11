@@ -1,6 +1,6 @@
 // Backen & Kochen: Plätzchen, Pizza und Kuchen – Schritt für Schritt mit dem Finger.
 import { register, session } from '../nav.js';
-import { h, onTap, sleep, starRain } from '../ui.js';
+import { h, onTap, sleep, starRain, colorName } from '../ui.js';
 import { gameShell, chooseLevel, getLevel, levelUp, winScreen, startRound, shuffle, pick } from './shell.js';
 import { kidPlush, boost } from '../pet.js';
 import { say } from '../speech.js';
@@ -19,6 +19,7 @@ const SHAPES = {
   mond: 'M10 -38 A38 38 0 1 0 10 38 A28 28 0 1 1 10 -38 Z',
   baum: 'M0 -42 L22 -12 L12 -12 L30 14 L6 14 L6 30 L-6 30 L-6 14 L-30 14 L-12 -12 L-22 -12 Z',
 };
+const TOPNAME = { '🍅': 'Tomate', '🫑': 'Paprika', '🍄': 'Pilz', '🌽': 'Mais', '🫒': 'Olive', '🍍': 'Ananas', '🧅': 'Zwiebel', '🍓': 'Erdbeere', '🫐': 'Blaubeere', '🍒': 'Kirsche', '🍌': 'Banane', '⭐': 'Stern' };
 const RECIPES = {
   plaetzchen: { icon: '🍪', name: 'Plätzchen', ing: ['mehl', 'zucker', 'butter', 'ei'], dough: '#f3d9a4' },
   pizza: { icon: '🍕', name: 'Pizza' },
@@ -31,7 +32,7 @@ register('baking', (app) => {
 
   function chooser() {
     right.innerHTML = '';
-    body.innerHTML = `<div class="bk-pick">${Object.entries(RECIPES).map(([k, r]) => `<button class="bk-r" data-r="${k}"><span>${r.icon}</span></button>`).join('')}</div>`;
+    body.innerHTML = `<div class="bk-pick">${Object.entries(RECIPES).map(([k, r]) => `<button class="bk-r" data-r="${k}" aria-label="${r.name}"><span>${r.icon}</span></button>`).join('')}</div>`;
     say('Was wollen wir backen? Plätzchen, Pizza oder Kuchen?');
     body.querySelectorAll('.bk-r').forEach((b) => onTap(b, async () => { const d = await chooseLevel(kid, 'baking'); cook(b.dataset.r, d); }, { sound: 'pop' }));
   }
@@ -78,7 +79,7 @@ register('baking', (app) => {
       card.innerHTML = diff === 'schwer' ? list.map((k) => `<span data-k="${k}">${ING[k].e}</span>`).join('<b>›</b>') : '';
       card.classList.toggle('show', diff === 'schwer');
       bowl(0, [], doughColor);
-      bar.innerHTML = shuffle([...list]).map((k) => `<button class="ing" data-k="${k}">${ING[k].e}</button>`).join('');
+      bar.innerHTML = shuffle([...list]).map((k) => `<button class="ing" data-k="${k}" data-say="${ING[k].name}">${ING[k].e}</button>`).join('');
       const blobs = work.querySelector('.blobs');
       let idx = 0;
       await new Promise((res) => {
@@ -138,7 +139,7 @@ register('baking', (app) => {
     async function cut(doughColor) {
       const need = diff === 'leicht' ? 4 : 6 + Math.min(lvl, 2);
       let shape = 'stern';
-      bar.innerHTML = Object.keys(SHAPES).map((k) => `<button class="ing cutter ${k === shape ? 'on' : ''}" data-s="${k}"><svg viewBox="-46 -46 92 92"><path d="${SHAPES[k]}" fill="none" stroke="#8a8f99" stroke-width="7"/></svg></button>`).join('');
+      bar.innerHTML = Object.keys(SHAPES).map((k) => `<button class="ing cutter ${k === shape ? 'on' : ''}" data-s="${k}" data-say="${{ stern: 'Stern', herz: 'Herz', mond: 'Mond', baum: 'Tannenbaum' }[k]}"><svg viewBox="-46 -46 92 92"><path d="${SHAPES[k]}" fill="none" stroke="#8a8f99" stroke-width="7"/></svg></button>`).join('');
       bar.onclick = (e) => { const b = e.target.closest('.cutter'); if (!b) return; shape = b.dataset.s; sfx.tap(); bar.querySelectorAll('.cutter').forEach((x) => x.classList.toggle('on', x === b)); };
       say(`Such dir eine Form aus und stich ${need} Plätzchen aus!`);
       const cookies = [];
@@ -192,7 +193,7 @@ register('baking', (app) => {
       const cks = [...work.querySelectorAll('.ck')];
       const icing = ['#ff8fc8', '#ffffff', '#7cc4ff', '#ffd23f', '#9be37a', '#7a4a2c'];
       let col = icing[0];
-      bar.innerHTML = icing.map((c, i) => `<button class="ing icing ${i ? '' : 'on'}" data-c="${c}" style="--c:${c}"></button>`).join('');
+      bar.innerHTML = icing.map((c, i) => `<button class="ing icing ${i ? '' : 'on'}" data-c="${c}" data-say="${colorName(c)}" style="--c:${c}"></button>`).join('');
       bar.onclick = (e) => { const b = e.target.closest('.icing'); if (!b) return; col = b.dataset.c; sfx.tap(); bar.querySelectorAll('.icing').forEach((x) => x.classList.toggle('on', x === b)); };
       say('Jetzt verzieren! Tipp auf die Plätzchen!');
       const done = new Set();
@@ -241,7 +242,7 @@ register('baking', (app) => {
     }
     async function toppings(list, region, need, text) {
       let t = list[0];
-      bar.innerHTML = list.map((e, i) => `<button class="ing ${i ? '' : 'on'}" data-t="${e}">${e}</button>`).join('');
+      bar.innerHTML = list.map((e, i) => `<button class="ing ${i ? '' : 'on'}" data-t="${e}" data-say="${TOPNAME[e] || ''}">${e}</button>`).join('');
       bar.onclick = (e) => { const b = e.target.closest('[data-t]'); if (!b) return; t = b.dataset.t; sfx.tap(); bar.querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x === b)); };
       say(text);
       const tops = work.querySelector('.tops') || el('g', { class: 'tops' });
@@ -351,7 +352,7 @@ register('baking', (app) => {
     }
     levelUp(kid, 'baking', diff, 5);
     const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: `Lecker! ${R.name} fertig!` });
-    if (r === 'again') chooser(); else (await import('../nav.js')).go('house', {});
+    if (r === 'again') chooser(); else (await import('../nav.js')).goBack('house');
   }
 
   chooser();

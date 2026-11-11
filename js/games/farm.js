@@ -139,7 +139,7 @@ register('farm', (app) => {
         levelUp(kid, 'farm', diff, 8);
         await sleep(900);
         const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: 'Alle Tiere sind glücklich!', speak: `Super, ${kid.name}! Alle Tiere sind satt und glücklich! Du bist ein echter Bauer!` });
-        if (r === 'again') play(); else (await import('../nav.js')).go('village', {});
+        if (r === 'again') play(); else (await import('../nav.js')).goBack('village');
       }
     };
     const hearts = (x, y, ch = '❤️') => { for (let i = 0; i < 3; i++) { const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x + i * 20 - 20); t.setAttribute('y', y); t.setAttribute('font-size', 34); t.textContent = ch; t.setAttribute('class', 'heart-fx'); t.style.animationDelay = i * 0.15 + 's'; fx.appendChild(t); setTimeout(() => t.remove(), 1700); } };

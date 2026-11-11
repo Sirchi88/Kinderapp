@@ -33,7 +33,7 @@ export function openStarJar(kid) {
       const p = Math.min(1, kid.stars / r.cost);
       return `<div class="goal ${p >= 1 ? 'ready' : ''}"><div class="em">${esc(r.emoji)}</div><div class="bar"><i style="width:${p * 100}%"></i></div><div class="lbl">${Math.min(kid.stars, r.cost)} / ${r.cost}</div></div>`;
     }).join('') || '<div class="goal"><div class="em">⭐</div></div>'}</div>
-    <button class="btn round go" style="position:absolute;top:calc(14px + var(--safe-t));right:calc(14px + var(--safe-r))" aria-label="Schließen">${ICON.close}</button>
+    <button class="btn round go" style="position:absolute;top:calc(14px + var(--safe-t));right:calc(14px + var(--safe-r))" aria-label="Zurück">${ICON.close}</button>
   </div>`);
   el.querySelector('.btn').addEventListener('click', () => { sfx.tap(); el.remove(); });
   el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });

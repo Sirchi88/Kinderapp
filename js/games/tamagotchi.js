@@ -8,10 +8,12 @@ import { PLUSH, OUTFIT, plushSVG } from '../art/plush.js';
 import { say } from '../speech.js';
 import { sfx, playMusic, stopMusic } from '../audio.js';
 import { roundDone } from '../breaks.js';
+import { toLocal, scale } from '../viewport.js';
 
 const FAV = { baer: '🍯', tukan: '🍓', wildschwein: '🥕', affe: '🍌', pavian: '🍌', rassel: '🍪', gelbi: '🍌', puppe: '🍼', einhorn: '🧁', schaf: '🌿', pony: '🥕', schwein: '🍎', kueken: '🌽', kuh: '🌿', elefant: '🥜', loewe: '🍖', panda: '🎋', pinguin: '🐟', faultier: '🍃' };
 const FOODS = ['🍎', '🥕', '🍌', '🍓', '🥨', '🧀', '🍕', '🍰', '🥛', '💧'];
 const SWEET = ['🍰', '🍪', '🧁', '🍯'];
+const FOODNAME = { '🍎': 'Apfel', '🥕': 'Karotte', '🍌': 'Banane', '🍓': 'Erdbeere', '🥨': 'Brezel', '🧀': 'Käse', '🍕': 'Pizza', '🍰': 'Kuchen', '🥛': 'Milch', '💧': 'Wasser', '🍯': 'Honig', '🍪': 'Keks', '🍼': 'Fläschchen', '🧁': 'Muffin', '🌿': 'Gras', '🌽': 'Mais', '🥜': 'Nüsse', '🍖': 'Fleisch', '🎋': 'Bambus', '🐟': 'Fisch', '🍃': 'Blätter' };
 
 const ROOM = `<svg class="room-bg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <defs><pattern id="tw" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="80" height="80" fill="#ffe6ee"/><path d="M20 16 l4 8 l8 1 l-6 6 l2 8 l-8 -4 l-8 4 l2 -8 l-6 -6 l8 -1 Z" fill="#fff"/><circle cx="60" cy="56" r="5" fill="#ffcadb"/></pattern>
@@ -80,7 +82,7 @@ register('tamagotchi', (app) => {
   function feed() {
     const fav = FAV[kid.plush];
     const foods = [fav, ...FOODS.filter((f) => f !== fav)].slice(0, 9);
-    tray.innerHTML = foods.map((f) => `<button class="food" data-f="${f}">${f}</button>`).join('');
+    tray.innerHTML = foods.map((f) => `<button class="food" data-f="${f}" data-say="${FOODNAME[f] || ''}">${f}</button>`).join('');
     tray.classList.add('open');
     say(pick(['Was möchtest du mir geben?', 'Mmmh, was gibt es zu essen?']));
   }
@@ -133,7 +135,7 @@ register('tamagotchi', (app) => {
     if (mode === 'play' || mode === 'sleep') return;
     hug();
   });
-  const moveCursor = (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; };
+  const moveCursor = (e) => { const [x, y] = toLocal(e.clientX, e.clientY); cursor.style.left = x + 'px'; cursor.style.top = y + 'px'; };
   wrap.addEventListener('pointermove', (e) => {
     if (!rubbing?.last || !(mode === 'bath' || mode === 'teeth')) return;
     moveCursor(e);
@@ -142,7 +144,7 @@ register('tamagotchi', (app) => {
     rubbing.amount += d / 40;
     if (Math.random() < 0.35) {
       const r = wrap.getBoundingClientRect();
-      const b = h(`<i class="foam" style="left:${e.clientX - r.left}px;top:${e.clientY - r.top}px;width:${14 + Math.random() * 26}px"></i>`);
+      const b = h(`<i class="foam" style="left:${(e.clientX - r.left) / scale()}px;top:${(e.clientY - r.top) / scale()}px;width:${14 + Math.random() * 26}px"></i>`);
       fxl.appendChild(b); setTimeout(() => b.remove(), mode === 'bath' ? 6000 : 1400);
     }
     if (performance.now() - (rubbing.snd || 0) > 140) { rubbing.snd = performance.now(); sfx.scrub(); }

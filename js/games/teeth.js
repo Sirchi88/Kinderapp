@@ -145,7 +145,7 @@ register('teeth', (app) => {
         svg.querySelector('.mouth-closed').style.display = '';
         levelUp(kid, 'teeth', diff, 8);
         const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: 'Blitzblanke Zähne!', speak: `Danke! Meine Zähne glänzen! Du bist ein Zahnputz-Profi, ${kid.name}!` });
-        if (r === 'again') play(); else (await import('../nav.js')).go('house', {});
+        if (r === 'again') play(); else (await import('../nav.js')).goBack('house');
       }, { once: true });
     }
   }

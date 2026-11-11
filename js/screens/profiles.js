@@ -10,6 +10,7 @@ import { openParents } from './parents.js';
 import { checkLimitNow } from '../breaks.js';
 import { sirchHouseScene } from '../art/village.js';
 import { kidPlush } from '../pet.js';
+import { canFullscreen, goFullscreen } from '../viewport.js';
 
 function bunting() {
   const cols = ['#ff8fa3', '#ffd23f', '#6fd3c7', '#b68cff', '#8fdc6a', '#ff9f1c'];
@@ -27,11 +28,12 @@ register('profiles', (app) => {
   const el = h(`<div class="screen profiles"><svg class="bg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${sirchHouseScene()}</svg><div class="bg-veil"></div>${bunting()}
     <h1>Wer spielt heute?</h1>
     <div class="profile-row">
-      ${state.kids.map((k) => `<button class="profile-card" data-id="${k.id}" style="--kid:${k.color};--kid-d:${kidColorDark(k.color)}">
+      ${state.kids.map((k) => `<button class="profile-card" data-id="${k.id}" data-say="${esc(k.name)}" style="--kid:${k.color};--kid-d:${kidColorDark(k.color)}">
         ${k.avatar ? `<div class="avatar">${personSVG({ ...k.avatar, scale: 1 }, { pose: 'wave' })}</div>${k.plush ? `<div class="pl">${kidPlush(k)}</div>` : ''}` : `<div class="question">?</div>`}
         <div class="stars">${ICON.star}${k.stars}</div>
         <div class="name">${esc(k.name)}</div></button>`).join('')}
     </div>
+    ${canFullscreen() ? '<button class="fs-btn" data-say="Vollbild">⛶ Vollbild</button>' : ''}
     <button class="parent-lock" aria-label="Elternbereich">${ICON.lock}</button>
   </div>`);
   app.appendChild(el);
@@ -46,6 +48,8 @@ register('profiles', (app) => {
     checkLimitNow(kid);
   }, { sound: 'pop' }));
 
+  const fs = el.querySelector('.fs-btn');
+  if (fs) onTap(fs, () => { goFullscreen(); fs.remove(); });
   holdButton(el.querySelector('.parent-lock'), 1500, async () => { if (await askPin()) openParents(); });
 
   // Begrüßung beim ersten Tippen irgendwo (Audio braucht eine Berührung)

@@ -20,6 +20,9 @@ const ITEMS = [
   I('e4', 'extra', 'zauberstab'), I('e5', 'extra', 'fluegel', { extraColor: '#ff8fc8' }), I('e6', 'extra', 'tasche'), I('e7', 'extra', 'brille', { extraColor: '#3a3d44' }),
 ];
 const byId = (id) => ITEMS.find((i) => i.id === id);
+const ITEMNAME = { muetze: 'Mütze', sonnenhut: 'Sonnenhut', kappe: 'Kappe', krone: 'Krone', piratenhut: 'Piratenhut', feuerwehrhelm: 'Feuerwehrhelm', trachtenhut: 'Trachtenhut', helm: 'Bauhelm', tshirt: 'T-Shirt', ringel: 'Ringelshirt', kleid: 'Kleid', dirndl: 'Dirndl', tracht: 'Trachtenhemd', regenjacke: 'Regenjacke', winterjacke: 'Winterjacke', schlafanzug: 'Schlafanzug', hoodie: 'Kapuzenpulli', pulli: 'Pulli', jeans: 'Jeans', shorts: 'Kurze Hose', rock: 'Rock', leggings: 'Leggings', lederhose: 'Lederhose', gummistiefel: 'Gummistiefel', winterstiefel: 'Winterstiefel', schal: 'Schal', sonnenbrille: 'Sonnenbrille', regenschirm: 'Regenschirm', zauberstab: 'Zauberstab', fluegel: 'Feenflügel', tasche: 'Tasche', brille: 'Brille' };
+const itemName = (it) => (it.val ? ITEMNAME[it.val] || '' : it.slot === 'boots' ? 'Schuhe' : 'Nichts');
+const COSNAME = { c1: 'Dirndl', c2: 'Tracht mit Lederhose', c3: 'Prinzessin', c7: 'Fee', c4: 'Pirat', c5: 'Feuerwehr', c6: 'Schlafenszeit' };
 const COSTUMES = [
   { id: 'c1', icon: '🏔️', set: ['t4', 'b4', 'h7', 's1', 'e0'] },
   { id: 'c2', icon: '🥨', set: ['t5', 'b5', 'h7', 's1', 'e0'] },
@@ -53,8 +56,8 @@ register('wardrobe', (app) => {
     const ppl = people(kid);
     who = who || ppl[0];
     body.innerHTML = `<div class="wr-start">
-      <div class="wr-people">${ppl.map((p) => `<button class="wr-p ${p.id === who.id ? 'on' : ''}" data-id="${p.id}">${personSVG(p.o, { crop: 'head' })}</button>`).join('')}</div>
-      <div class="wr-modes"><button class="wr-mode" data-m="free"><span>👗</span></button><button class="wr-mode" data-m="weather"><span>⛅</span></button></div></div>`;
+      <div class="wr-people">${ppl.map((p) => `<button class="wr-p ${p.id === who.id ? 'on' : ''}" data-id="${p.id}" aria-label="${p.id === 'me' ? kid.name : p.o.name || ''}">${personSVG(p.o, { crop: 'head' })}</button>`).join('')}</div>
+      <div class="wr-modes"><button class="wr-mode" data-m="free" aria-label="Freies Anziehen"><span>👗</span></button><button class="wr-mode" data-m="weather" aria-label="Wetter-Spiel"><span>⛅</span></button></div></div>`;
     say('Wen möchtest du anziehen? Freies Anziehen, oder das Wetter-Spiel?');
     body.querySelectorAll('.wr-p').forEach((b) => onTap(b, () => { who = ppl.find((p) => p.id === b.dataset.id); body.querySelectorAll('.wr-p').forEach((x) => x.classList.toggle('on', x === b)); }, { sound: 'pop' }));
     body.querySelectorAll('.wr-mode').forEach((b) => onTap(b, async () => {
@@ -91,8 +94,8 @@ register('wardrobe', (app) => {
     tabs.innerHTML = CATS.map(([k, i]) => `<button class="tab" data-c="${k}">${i}</button>`).join('');
     const drawItems = () => {
       tabs.querySelectorAll('.tab').forEach((t) => t.classList.toggle('on', t.dataset.c === cat));
-      if (cat === 'costume') items.innerHTML = COSTUMES.map((c) => `<button class="wr-it costume" data-cos="${c.id}"><span class="ic">${c.icon}</span></button>`).join('');
-      else items.innerHTML = ITEMS.filter((i) => i.slot === cat).map((i) => `<button class="wr-it" data-i="${i.id}">${tile(o, i)}</button>`).join('');
+      if (cat === 'costume') items.innerHTML = COSTUMES.map((c) => `<button class="wr-it costume" data-cos="${c.id}" data-say="${COSNAME[c.id] || ''}"><span class="ic">${c.icon}</span></button>`).join('');
+      else items.innerHTML = ITEMS.filter((i) => i.slot === cat).map((i) => `<button class="wr-it" data-i="${i.id}" data-say="${itemName(i)}">${tile(o, i)}</button>`).join('');
     };
     tabs.addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (!t) return; cat = t.dataset.c; sfx.tap(); drawItems(); });
     items.addEventListener('click', (e) => {
@@ -136,7 +139,7 @@ register('wardrobe', (app) => {
     body.querySelector('.wr-ui').classList.add('wx-' + wKey);
     wx.innerHTML = `<div class="wx-icon">${w.icon}</div>${wKey === 'sonne' ? '' : Array.from({ length: 26 }, (_, i) => `<i class="${wKey === 'regen' ? 'drop' : 'flake'}" style="left:${(i * 37) % 100}%;animation-delay:${(i * 0.17) % 2}s"></i>`).join('')}`;
     body.querySelector('.wr-tabs').innerHTML = `<div class="need-list">${need.map((id) => `<i data-n="${id}"></i>`).join('')}</div>`;
-    items.innerHTML = offer.map((i) => `<button class="wr-it" data-i="${i.id}">${tile(o, i)}</button>`).join('');
+    items.innerHTML = offer.map((i) => `<button class="wr-it" data-i="${i.id}" data-say="${itemName(i)}">${tile(o, i)}</button>`).join('');
     drawFig(fig, o, wKey === 'sonne' ? 'happy' : 'surprised');
     startRound();
     say(`${w.say} Zieh ${who.id === 'me' ? 'dich' : who.o.name || 'sie'} richtig an!`);

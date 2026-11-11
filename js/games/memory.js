@@ -8,6 +8,7 @@ import { personSVG, FAMILY } from '../art/person.js';
 import { baileySVG } from '../art/bailey.js';
 import { listPhotos } from '../media.js';
 import { say } from '../speech.js';
+import { stageW, stageH } from '../viewport.js';
 import { sfx } from '../audio.js';
 
 const TURTLE = `<svg viewBox="-60 -50 120 80"><ellipse cx="-24" cy="12" rx="11" ry="7" fill="#9cc96a" stroke="#5a3e2b" stroke-width="3"/><ellipse cx="24" cy="12" rx="11" ry="7" fill="#9cc96a" stroke="#5a3e2b" stroke-width="3"/>
@@ -48,12 +49,12 @@ register('memory', (app) => {
     const fam = familyFaces();
     body.innerHTML = `<div class="mem-setup">
       <div class="themes">
-        <button class="theme" data-t="tiere"><div class="prev">${['baer', 'einhorn', 'tukan', 'kuh'].map((k) => plushSVG(k)).join('')}</div></button>
-        <button class="theme" data-t="familie"><div class="prev">${fam.slice(0, 2).map((f) => f.svg).join('')}${fam[6].svg}${fam[7].svg}</div></button>
-        <button class="theme ${photos.length < 3 ? 'off' : ''}" data-t="fotos"><div class="prev photos">${photos.length >= 3 ? photos.slice(0, 4).map((p) => `<img src="${p.data}" alt="">`).join('') : '<span class="cam">📷</span>'}</div></button>
+        <button class="theme" data-t="tiere" aria-label="Tiere"><div class="prev">${['baer', 'einhorn', 'tukan', 'kuh'].map((k) => plushSVG(k)).join('')}</div></button>
+        <button class="theme" data-t="familie" aria-label="Familie"><div class="prev">${fam.slice(0, 2).map((f) => f.svg).join('')}${fam[6].svg}${fam[7].svg}</div></button>
+        <button class="theme ${photos.length < 3 ? 'off' : ''}" data-t="fotos" aria-label="Fotos"><div class="prev photos">${photos.length >= 3 ? photos.slice(0, 4).map((p) => `<img src="${p.data}" alt="">`).join('') : '<span class="cam">📷</span>'}</div></button>
       </div>
-      <div class="players"><button class="pl-opt on" data-p="">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</button>
-        <span class="plus">+</span>${others.map((o) => `<button class="pl-opt" data-p="${o.id}">${o.face}</button>`).join('')}</div>
+      <div class="players"><button class="pl-opt on" data-p="" aria-label="${kid.name}">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</button>
+        <span class="plus">+</span>${others.map((o) => `<button class="pl-opt" data-p="${o.id}" aria-label="${o.name}">${o.face}</button>`).join('')}</div>
     </div>`;
     say(`Mit welchen Bildern willst du spielen? Und spielt jemand mit?`);
     body.querySelectorAll('.pl-opt').forEach((b) => onTap(b, () => {
@@ -87,7 +88,7 @@ register('memory', (app) => {
     body.innerHTML = `<div class="mem-board" style="--cols:${cols};--rows:${rows}">${cards.map((c, i) => `<button class="mcard" data-i="${i}"><div class="inner"><div class="back"><span>🏡</span></div><div class="front">${c.svg}</div></div></button>`).join('')}</div>`;
     right.innerHTML = players.length > 1 ? players.map((p, i) => `<div class="pchip ${i === 0 ? 'on' : ''}" style="--kid:${p.color}"><span class="f">${p.face}</span><b>0</b></div>`).join('') : '';
     const fit = () => {
-      const W = innerWidth * 0.94, H = innerHeight * 0.78;
+      const W = stageW() * 0.94, H = stageH() * 0.78;
       const size = Math.floor(Math.min((W - (cols - 1) * 12) / cols, (H - (rows - 1) * 12) / rows));
       body.querySelector('.mem-board').style.setProperty('--size', size + 'px');
     };

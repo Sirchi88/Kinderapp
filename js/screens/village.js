@@ -30,12 +30,13 @@ register('village', (app, params) => {
   const el = h(`<div class="screen village" style="--kid:${kid.color}">
     <svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${sirchHouseScene({ xmas, birthday: bday })}</svg>${xmas ? `<div class="snowfall">${Array.from({ length: 40 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-duration:${5 + (i % 5)}s;animation-delay:${-(i * 0.7) % 8}s;width:${6 + (i % 3) * 3}px;height:${6 + (i % 3) * 3}px"></i>`).join('')}</div>` : ''}
     <div class="hud">
-      <button class="kid-badge" style="--kid:${kid.color};color:${kidColorDark(kid.color)}" aria-label="Kind wechseln"><span class="face">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</span>${esc(name)}</button>
+      <button class="kid-badge" style="--kid:${kid.color};color:${kidColorDark(kid.color)}" aria-label="Wer spielt?"><span class="face">${personSVG({ ...kid.avatar, scale: 1 }, { crop: 'head' })}</span>${esc(name)}</button>
       <button class="star-badge" aria-label="Sterne">${ICON.star}<span>${kid.stars}</span></button>
       <span class="spacer"></span>
       <button class="btn round ghost" data-a="plush" aria-label="Kuscheltier">${kidPlush(kid, { mood: 'happy' })}</button>
       <button class="btn round ghost" data-a="dress" aria-label="Umziehen">${ICON.hanger}</button>
     </div>
+    <button class="hub-btn" data-say="Spiele"><span class="hi">🎲</span>Spiele</button>
     <button class="parent-lock" aria-label="Elternbereich">${ICON.lock}</button>
   </div>`);
   app.appendChild(el);
@@ -176,6 +177,7 @@ register('village', (app, params) => {
   });
 
   // ---------- HUD ----------
+  onTap(el.querySelector('.hub-btn'), () => go('games', {}), { sound: 'pop' });
   onTap(el.querySelector('.kid-badge'), () => go('profiles'));
   onTap(el.querySelector('.star-badge'), () => openStarJar(kid), { sound: 'sparkle' });
   onTap(el.querySelector('[data-a=dress]'), () => go('editor', {}));

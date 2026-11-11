@@ -12,6 +12,7 @@ import { baileySVG } from '../art/bailey.js';
 import { kidPlush } from '../pet.js';
 import { listPhotos } from '../media.js';
 import { say } from '../speech.js';
+import { stageW, stageH } from '../viewport.js';
 import { sfx } from '../audio.js';
 
 const X = 'xmlns="http://www.w3.org/2000/svg"';
@@ -54,8 +55,8 @@ register('puzzle', (app) => {
   async function chooser() {
     const photos = await listPhotos();
     const thumbs = await Promise.all(PICS.map((p) => svgToImage(p.svg(kid), 240, 180)));
-    body.innerHTML = `<div class="pz-pick">${PICS.map((p, i) => `<button class="pz-thumb" data-p="${p.id}"><img src="${thumbs[i]}" alt=""></button>`).join('')}
-      ${photos.map((p) => `<button class="pz-thumb sq" data-photo="${p.id}"><img src="${p.data}" alt=""></button>`).join('')}</div>`;
+    body.innerHTML = `<div class="pz-pick">${PICS.map((p, i) => `<button class="pz-thumb" data-p="${p.id}" aria-label="${{ dorf: 'Das Dorf', haus: 'Unser Haus', familie: 'Die Familie', tiere: 'Die Kuscheltiere' }[p.id]}"><img src="${thumbs[i]}" alt=""></button>`).join('')}
+      ${photos.map((p) => `<button class="pz-thumb sq" data-photo="${p.id}" aria-label="Foto"><img src="${p.data}" alt=""></button>`).join('')}</div>`;
     say('Welches Bild möchtest du puzzeln?');
     body.querySelectorAll('.pz-thumb').forEach((b) => onTap(b, async () => {
       const diff = await chooseLevel(kid, 'puzzle');
@@ -71,11 +72,11 @@ register('puzzle', (app) => {
     const sizes = diff === 'leicht' ? [[2, 2], [3, 2], [3, 3]] : [[3, 3], [4, 3], [4, 4], [5, 4]];
     let [cols, rows] = sizes[Math.min(lvl, sizes.length - 1)];
     if (aspect === 1 && cols !== rows) rows = cols;
-    const small = innerHeight < 520;
-    const H = innerHeight * (small ? 0.78 : 0.74), W = innerWidth * 0.56;
+    const innerWidth = stageW(), innerHeight = stageH();
+    const H = innerHeight * 0.74, W = innerWidth * 0.56;
     let bh = H, bw = bh * aspect;
     if (bw > W) { bw = W; bh = bw / aspect; }
-    const bx = innerWidth - bw - innerWidth * 0.05, by = (innerHeight - bh) / 2 + (small ? 18 : 24);
+    const bx = innerWidth - bw - innerWidth * 0.05, by = (innerHeight - bh) / 2 + 24;
     const pw = bw / cols, ph = bh / rows;
     body.innerHTML = `<div class="pz-board" style="left:${bx}px;top:${by}px;width:${bw}px;height:${bh}px">
         <img class="ghost ${diff}" src="${src}" alt="">${Array.from({ length: cols * rows }, (_, i) => `<i style="left:${(i % cols) * pw}px;top:${Math.floor(i / cols) * ph}px;width:${pw}px;height:${ph}px"></i>`).join('')}</div>`;
@@ -120,7 +121,7 @@ register('puzzle', (app) => {
       levelUp(kid, 'puzzle', diff, 6);
       await sleep(1200);
       const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: 'Puzzle geschafft!' });
-      if (r === 'again') chooser(); else (await import('../nav.js')).go('house', {});
+      if (r === 'again') chooser(); else (await import('../nav.js')).goBack('house');
     }
   }
 

@@ -6,6 +6,7 @@ import { draggable, center } from './drag.js';
 import { plushSVG } from '../art/plush.js';
 import { kidPlush } from '../pet.js';
 import { say } from '../speech.js';
+import { stageW, stageH, localRect } from '../viewport.js';
 import { sfx } from '../audio.js';
 
 const ZAHL = ['null', 'eins', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'];
@@ -63,11 +64,11 @@ register('sorting', (app) => {
       body.innerHTML = `<div class="color-task"><div class="baskets">${cols.map((c) => `<div class="basket" data-c="${c[0]}">${basketSVG(c[0])}</div>`).join('')}</div></div>`;
       say(`Sortiere die Bälle in den Korb mit der gleichen Farbe!`);
       let left = balls.length;
-      const W = innerWidth, top = innerHeight * 0.18;
+      const W = stageW(), top = stageH() * 0.18;
       balls.forEach((c, i) => {
-        const b = h(`<div class="drag-obj ball" data-c="${c[0]}">${ballSVG(c[0])}</div>`);
-        const sz = Math.min(90, innerHeight * 0.14);
-        Object.assign(b.style, { width: sz + 'px', height: sz + 'px', left: W * 0.12 + (i / balls.length) * W * 0.72 + Math.random() * 20 + 'px', top: top + Math.random() * innerHeight * 0.18 + 'px' });
+        const b = h(`<div class="drag-obj cball" data-c="${c[0]}">${ballSVG(c[0])}</div>`);
+        const sz = Math.min(90, stageH() * 0.14);
+        Object.assign(b.style, { width: sz + 'px', height: sz + 'px', left: W * 0.12 + (i / balls.length) * W * 0.72 + Math.random() * 20 + 'px', top: top + Math.random() * stageH() * 0.18 + 'px' });
         body.appendChild(b);
         draggable(b, {
           onDrop: (el, e, { back }) => {
@@ -76,7 +77,7 @@ register('sorting', (app) => {
             if (!basket) return;
             if (basket.dataset.c === c[0]) {
               el.dataset.locked = '1'; el.classList.add('in');
-              const r = basket.getBoundingClientRect();
+              const r = localRect(basket);
               el.style.left = r.left + r.width / 2 - el.offsetWidth / 2 + (Math.random() * 40 - 20) + 'px'; el.style.top = r.top + 4 + 'px';
               sfx.pop(); say(c[1]);
               if (--left === 0) setTimeout(resolve, 700);
@@ -105,10 +106,10 @@ register('sorting', (app) => {
       body.innerHTML = `<div class="shape-task"><div class="box">${shuffle([...keys]).map((k) => `<div class="hole" data-k="${k}">${shapeSVG(k, true)}</div>`).join('')}</div></div>`;
       say('Steck die Formen in die richtigen Löcher!');
       let left = keys.length;
-      const sz = Math.min(110, innerHeight * 0.17);
+      const sz = Math.min(110, stageH() * 0.17);
       keys.forEach((k, i) => {
         const el = h(`<div class="drag-obj shape" data-k="${k}">${shapeSVG(k)}</div>`);
-        Object.assign(el.style, { width: sz + 'px', height: sz + 'px', left: innerWidth * 0.1 + i * (innerWidth * 0.8 / keys.length) + 'px', top: innerHeight * 0.16 + Math.random() * 30 + 'px' });
+        Object.assign(el.style, { width: sz + 'px', height: sz + 'px', left: stageW() * 0.1 + i * (stageW() * 0.8 / keys.length) + 'px', top: stageH() * 0.16 + Math.random() * 30 + 'px' });
         body.appendChild(el);
         draggable(el, {
           onDrop: (d, e, { back }) => {
@@ -116,7 +117,7 @@ register('sorting', (app) => {
             const hole = [...body.querySelectorAll('.hole')].find((ho) => { const r = ho.getBoundingClientRect(); return c.x > r.left && c.x < r.right && c.y > r.top && c.y < r.bottom; });
             if (!hole) return;
             if (hole.dataset.k === k) {
-              const r = hole.getBoundingClientRect();
+              const r = localRect(hole);
               d.dataset.locked = '1'; d.classList.add('in');
               d.style.left = r.left + (r.width - sz) / 2 + 'px'; d.style.top = r.top + (r.height - sz) / 2 + 'px';
               sfx.pop(); say(SHAPES[k].name);
@@ -144,7 +145,7 @@ register('sorting', (app) => {
     right.innerHTML = '';
     levelUp(kid, 'sorting', diff, 6);
     const r = await winScreen(kid, { stars: diff === 'schwer' ? 2 : 1, text: 'Alles richtig sortiert!' });
-    if (r === 'again') play(); else (await import('../nav.js')).go('house', {});
+    if (r === 'again') play(); else (await import('../nav.js')).goBack('house');
   }
   play();
   return {};

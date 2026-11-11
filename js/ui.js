@@ -148,3 +148,24 @@ export function ask(text, { yes = 'Ja', no = 'Abbrechen', danger = false } = {})
     });
   });
 }
+
+/** Farbe in ein deutsches Wort übersetzen (zum Vorlesen) */
+export function colorName(hex) {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.slice(0, 2), 16) / 255, g = parseInt(c.slice(2, 4), 16) / 255, b = parseInt(c.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, d = max - min;
+  if (d < 0.08) return l > 0.9 ? 'Weiß' : l < 0.25 ? 'Schwarz' : 'Grau';
+  let hue = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  hue = (hue * 60 + 360) % 360;
+  const sat = d / (1 - Math.abs(2 * l - 1));
+  if (hue < 45 && l > 0.7 && sat < 0.9) return 'Hautfarbe';
+  if (hue < 40 && l < 0.45) return 'Braun';
+  if (hue < 15 || hue >= 345) return l > 0.7 ? 'Rosa' : 'Rot';
+  if (hue < 40) return 'Orange';
+  if (hue < 65) return 'Gelb';
+  if (hue < 160) return 'Grün';
+  if (hue < 195) return 'Türkis';
+  if (hue < 250) return 'Blau';
+  if (hue < 290) return 'Lila';
+  return 'Rosa';
+}

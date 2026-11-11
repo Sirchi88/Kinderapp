@@ -1,6 +1,6 @@
 // Gemeinsamer Rahmen für alle Spiele: Zurück-Knopf, Schwierigkeit wählen, Siegerbildschirm, Fortschritt.
 import { save, addStars, state } from '../store.js';
-import { go, session } from '../nav.js';
+import { go, goBack, session } from '../nav.js';
 import { h, ICON, onTap, starRain, overlay, esc } from '../ui.js';
 import { say } from '../speech.js';
 import { sfx, playMusic } from '../audio.js';
@@ -15,7 +15,7 @@ export function gameShell(app, { cls = '', back = 'village', backParams = {}, mu
     <div class="game-top"><button class="btn round ghost g-back" aria-label="Zurück">${ICON.back}</button><span class="spacer"></span><div class="g-right"></div></div>
   </div>`);
   app.appendChild(el);
-  onTap(el.querySelector('.g-back'), () => go(back, backParams));
+  onTap(el.querySelector('.g-back'), () => goBack(back, backParams));
   if (music) playMusic(music);
   session.paused = false;
   return { el, body: el.querySelector('.game-body'), right: el.querySelector('.g-right') };
