@@ -131,3 +131,20 @@ export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export function kidColorDark(hex) {
   return hex === '#ff8fa3' ? '#d9506e' : hex === '#b68cff' ? '#7d55d1' : '#5a3e2b';
 }
+
+/** Eigene Sicherheitsabfrage (statt confirm(), das nicht überall funktioniert). Ergebnis: true/false */
+export function ask(text, { yes = 'Ja', no = 'Abbrechen', danger = false } = {}) {
+  return new Promise((resolve) => {
+    const el = h(`<div class="overlay ask-ov"><div class="card ask"><p></p><div class="ask-btns"><button class="pbtn" data-r="0"></button><button class="pbtn ${danger ? 'warn' : 'go'}" data-r="1"></button></div></div></div>`);
+    el.querySelector('p').textContent = text;
+    el.querySelector('[data-r="0"]').textContent = no;
+    el.querySelector('[data-r="1"]').textContent = yes;
+    document.getElementById('overlay-root').appendChild(el);
+    el.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-r]');
+      if (!b && e.target !== el) return;
+      el.remove();
+      resolve(b ? b.dataset.r === '1' : false);
+    });
+  });
+}

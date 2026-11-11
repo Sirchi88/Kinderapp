@@ -1,7 +1,7 @@
 // Elternbereich (PIN-geschützt): Pausen, Spielzeit, Belohnungen, Ton, Statistik.
 import { state, save, statFor, localDay, addStars, resetAll, uid } from '../store.js';
 import { go, session } from '../nav.js';
-import { h, esc } from '../ui.js';
+import { h, esc, ask } from '../ui.js';
 import { applyVolumes, sfx, unlockAudio, stopMusic } from '../audio.js';
 import { say, hush } from '../speech.js';
 import { BREAK_TYPES } from '../activities.js';
@@ -179,13 +179,13 @@ export function openParents() {
       case 'close': close(); break;
       case 'redo': {
         const k = state.kids[i];
-        if (confirm(`Figur und Kuscheltier von ${k.name} neu gestalten?`)) { k.avatar = null; k.plush = null; changed(true); }
+        if (await ask(`Figur und Kuscheltier von ${k.name} neu gestalten?`, { yes: 'Neu gestalten' })) { k.avatar = null; k.plush = null; changed(true); }
         break;
       }
       case 'testbreak': close(true); break;
       case 'petfull': { const k = state.kids[i]; k.pet = { hunger: 100, clean: 100, energy: 100, fun: 100, love: 100, t: Date.now() }; changed(); sfx.sparkle(); break; }
-      case 'delphoto': if (confirm('Foto löschen?')) { await deletePhoto(a.dataset.id); loadMedia(); } break;
-      case 'deldrawing': if (confirm('Bild löschen?')) { await deleteDrawing(a.dataset.id); loadMedia(); } break;
+      case 'delphoto': if (await ask('Dieses Foto löschen?', { yes: 'Löschen', danger: true })) { await deletePhoto(a.dataset.id); loadMedia(); } break;
+      case 'deldrawing': if (await ask('Dieses Bild löschen?', { yes: 'Löschen', danger: true })) { await deleteDrawing(a.dataset.id); loadMedia(); } break;
       case 'addidea': {
         const text = main.querySelector('#idea-text').value.trim();
         if (!text) return;
@@ -196,7 +196,7 @@ export function openParents() {
       case 'star': addStars(state.kids[i], +a.dataset.n); changed(true); break;
       case 'redeem': {
         const r = state.rewards.find((x) => x.id === a.dataset.id), k = state.kids[i];
-        if (k.stars >= r.cost && confirm(`${r.name} für ${k.name} einlösen? (${r.cost} Sterne)`)) { addStars(k, -r.cost); unlockAudio(); sfx.tada(); changed(true); }
+        if (k.stars >= r.cost && (await ask(`„${r.name}“ für ${k.name} einlösen? Dafür werden ${r.cost} Sterne abgezogen.`, { yes: 'Einlösen' }))) { addStars(k, -r.cost); unlockAudio(); sfx.tada(); changed(true); }
         break;
       }
       case 'delreward': state.rewards = state.rewards.filter((r) => r.id !== a.dataset.id); changed(true); break;
@@ -208,7 +208,7 @@ export function openParents() {
         if (!(await askPin())) state.pin = old;
         save(true); break;
       }
-      case 'reset': if (confirm('Wirklich ALLES löschen? Das kann nicht rückgängig gemacht werden.') && confirm('Ganz sicher?')) resetAll(); break;
+      case 'reset': if ((await ask('Wirklich ALLES löschen? Figuren, Sterne, Einstellungen und Statistik sind dann weg.', { yes: 'Weiter', danger: true })) && (await ask('Ganz sicher? Das kann nicht rückgängig gemacht werden.', { yes: 'Alles löschen', danger: true }))) resetAll(); break;
     }
   });
 

@@ -279,6 +279,10 @@ body[data-bubble=low] .bubble.show { transform: translate(-50%, 0); }
 .toggle::after { content: ""; position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .15); transition: transform .2s; }
 .toggle.on { background: #8fdc6a; }
 .toggle.on::after { transform: translateX(26px); }
+.ask-ov { z-index: 130; }
+.ask { max-width: min(460px, 90vw); display: flex; flex-direction: column; gap: 18px; font-size: 19px; font-weight: 700; color: #4a3626; }
+.ask p { margin: 0; line-height: 1.4; }
+.ask-btns { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; }
 .pbtn { padding: 10px 16px; border-radius: 14px; background: #fff3d6; font-weight: 800; font-size: 16px; box-shadow: 0 2px 0 #ecd9be; }
 .pbtn.go { background: #8fdc6a; color: #fff; box-shadow: 0 2px 0 #5fae42; }
 .pbtn.warn { background: #ffe0dc; color: #b23a2b; box-shadow: 0 2px 0 #f2b8ae; }
