@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{background:#bfe3a0;margin:0;font-family:sans-serif}.row{display:flex;flex-wrap:wrap;gap:8px;padding:8px}.c{width:150px;text-align:center;font-size:12px}.c svg{width:150px;height:220px}.p svg{height:150px}</style></head><body>
+<div class="row" id="fam"></div><div class="row p" id="pl"></div>
+<script type="module">
+import {personSVG,FAMILY,defaultKidAvatar} from '../js/art/person.js';
+import {plushSVG,PLUSH} from '../js/art/plush.js';
+const fam=document.getElementById('fam');
+const all={...FAMILY,malia:{...defaultKidAvatar(0),scale:.75},nele:{...defaultKidAvatar(1),scale:.7}};
+for(const [k,v] of Object.entries(all)) fam.innerHTML+=`<div class="c">${personSVG(v,{pose:k==='papa'?'wave':'stand'})}<br>${k}</div>`;
+const pl=document.getElementById('pl');
+for(const k of Object.keys(PLUSH)) pl.innerHTML+=`<div class="c">${plushSVG(k,{mood:k==='baer'?'sad':k==='kuh'?'sleep':'happy'})}<br>${k}</div>`;
+</script></body></html>
