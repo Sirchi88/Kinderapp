@@ -33,7 +33,7 @@ onSay((text) => showBubble(text, session.kid?.plush || 'baer'));
 
 // Audio auf iOS beim ersten Berühren freischalten
 const unlock = () => { unlockAudio(); window.__audioUnlocked = true; };
-window.addEventListener('pointerdown', unlock, { capture: true });
+for (const ev of ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']) window.addEventListener(ev, unlock, { capture: true });
 
 // Jeder Tastendruck wird vorgelesen (Kinder können noch nicht lesen).
 // Das Spiel selbst darf danach sprechen – das ersetzt dann die Beschriftung.

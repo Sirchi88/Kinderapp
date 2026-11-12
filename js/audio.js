@@ -3,7 +3,19 @@ import { state } from './store.js';
 
 let ctx = null, master, sfxBus, musicBus, noiseBuf;
 
+// Winziges stilles WAV: Ein normales <audio>-Element schaltet iOS in den Wiedergabe-Modus,
+// damit Töne auch bei aktivem Lautlos-Schalter zu hören sind.
+function silentWav() {
+  const n = 2205, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 22050, true); v.setUint32(28, 44100, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+let keepAlive = null, unlocked = false;
+
 export function unlockAudio() {
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
   if (!ctx) {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
@@ -16,8 +28,21 @@ export function unlockAudio() {
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     applyVolumes();
   }
-  if (ctx.state === 'suspended') ctx.resume();
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+  if (!unlocked) {
+    // Klassische iOS-Freischaltung: einen leeren Puffer abspielen
+    try { const b = ctx.createBufferSource(); b.buffer = ctx.createBuffer(1, 1, 22050); b.connect(ctx.destination); b.start(0); } catch (e) {}
+    try {
+      keepAlive ??= Object.assign(new Audio(silentWav()), { loop: true, volume: 0.01 });
+      keepAlive.setAttribute('playsinline', '');
+      keepAlive.play().then(() => { unlocked = true; }).catch(() => {});
+    } catch (e) {}
+  }
 }
+export const audioState = () => (ctx ? ctx.state : 'none');
+
+// Nach dem Zurückkehren in die App (iOS unterbricht den Ton) wieder aufnehmen
+document.addEventListener('visibilitychange', () => { if (!document.hidden && ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); });
 
 export function applyVolumes() {
   if (!ctx) return;

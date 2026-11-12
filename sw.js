@@ -1,6 +1,6 @@
 // Offline-Speicher: Die App funktioniert nach dem ersten Öffnen auch ohne Internet.
 // Bei jeder neuen Version VERSION erhöhen.
-const VERSION = 'sirchhausen-v5';
+const VERSION = 'sirchhausen-v6';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/store.js', 'js/nav.js', 'js/ui.js', 'js/audio.js', 'js/speech.js', 'js/motion.js', 'js/pin.js', 'js/breaks.js', 'js/activities.js',
